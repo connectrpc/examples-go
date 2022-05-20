@@ -1,3 +1,4 @@
+// Lightly modified from https://github.com/mattshiel/eliza-go
 package eliza
 
 import (
