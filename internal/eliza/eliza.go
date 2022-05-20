@@ -31,7 +31,7 @@ func (e *eliza) ReplyTo(input string) string {
 		return randChoice(goodbyes)
 	}
 
-	if ok, response := lookupResponse(input); ok {
+	if response, ok := lookupResponse(input); ok {
 		return response
 	}
 
@@ -40,7 +40,7 @@ func (e *eliza) ReplyTo(input string) string {
 }
 
 // lookupResponse does a lookup with regex
-func lookupResponse(input string) (bool, string) {
+func lookupResponse(input string) (string, bool) {
 	// Look up responses from psychobabble mapping
 	for re, responses := range psychobabble {
 		matches := re.FindStringSubmatch(input)
@@ -53,10 +53,10 @@ func lookupResponse(input string) (bool, string) {
 			if strings.Contains(response, "%s") {
 				response = fmt.Sprintf(response, fragment)
 			}
-			return true, response
+			return response, true
 		}
 	}
-	return false, ""
+	return "", false
 }
 
 // isQuitStatement returns if the statement is a quit statement
