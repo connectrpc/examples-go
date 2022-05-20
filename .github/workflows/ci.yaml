@@ -1,0 +1,67 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+env:
+  MAKEFLAGS: "-j 8"
+  PRIVATE_REGISTRY_HOST: us-central1-docker.pkg.dev
+  PRIVATE_REGISTRY_URL: us-central1-docker.pkg.dev/connect-demo-393314/connect-demo-registry
+permissions:
+  contents: read
+  id-token: 'write'
+jobs:
+  testlint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup-go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.20.x
+      - name: make-test
+        run: make test && make checkgenerate
+      - name: make-lint
+        run: make lint
+  docker-build-push:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs:
+      - testlint
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - id: auth
+        name: auth-to-gcp
+        uses: google-github-actions/auth@v1
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: projects/409526754884/locations/global/workloadIdentityPools/connect-demo-wif-pool/providers/connect-demo-wif-provider
+          service_account: connect-demo-registry-writer@connect-demo-393314.iam.gserviceaccount.com
+      - name: login-gcr
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.PRIVATE_REGISTRY_HOST }}
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+      - name: setup-docker-buildx
+        uses: docker/setup-buildx-action@v2
+      - name: build-push
+        uses: docker/build-push-action@v4
+        with:
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:latest
+            ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+      - name: Update Cloud Run
+        run: gcloud run services update connect-demo-cloud-run --image=${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }} --region us-central1

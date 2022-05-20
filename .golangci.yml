@@ -1,0 +1,70 @@
+run:
+  skip-dirs-use-default: false
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+  exhaustruct:
+    include:
+      # No zero values for param structs.
+      - 'connect-examples-go\..*[pP]arams'
+  forbidigo:
+    forbid:
+      # Unlike most Buf projects, we're allowing the standard library's log
+      # package: this is a demo service, so let's keep it simple.
+      - '^fmt\.Print'
+      - '^print$'
+      - '^println$'
+      - '^panic$'
+  gci:
+    sections:
+      - standard # Standard section: captures all standard packages.
+      - default # Default section: contains all imports that could not be matched to another section type.
+      - prefix(connect-examples-go) # Custom section: groups all imports with the specified Prefix.
+  godox:
+    # TODO, OPT, etc. comments are fine to commit. Use FIXME comments for
+    # temporary hacks, and use godox to prevent committing them.
+    keywords: [FIXME]
+  varnamelen:
+    ignore-decls:
+      - T any
+      - i int
+      - wg sync.WaitGroup
+linters:
+  enable-all: true
+  disable:
+    - cyclop            # covered by gocyclo
+    - deadcode          # abandoned
+    - depguard          # in golangci-lint v1.53.0+ default requires only stdlib deps
+    - exhaustivestruct  # replaced by exhaustruct
+    - funlen            # rely on code review to limit function length
+    - gocognit          # dubious "cognitive overhead" quantification
+    - gofumpt           # prefer standard gofmt
+    - goimports         # rely on gci instead
+    - golint            # deprecated by Go team
+    - gomnd             # some unnamed constants are okay
+    - ifshort           # deprecated by author
+    - interfacer        # deprecated by author
+    - ireturn           # "accept interfaces, return structs" isn't ironclad
+    - lll               # don't want hard limits for line length
+    - maintidx          # covered by gocyclo
+    - maligned          # readability trumps efficient struct packing
+    - nlreturn          # generous whitespace violates house style
+    - nosnakecase       # deprecated in https://github.com/golangci/golangci-lint/pull/3065
+    - paralleltest      # in this project, it's not worth making all tests parallel
+    - scopelint         # deprecated by author
+    - structcheck       # abandoned
+    - testpackage       # internal tests are fine
+    - tparallel         # in this project, it's not worth making all tests parallel
+    - varcheck          # abandoned
+    - wrapcheck         # don't _always_ need to wrap errors
+    - wsl               # generous whitespace violates house style
+issues:
+  exclude:
+    # Don't ban use of fmt.Errorf to create new errors, but the remaining
+    # checks from err113 are useful.
+    - "err113: do not define dynamic errors.*"
+  exclude-rules:
+    # It's much more convenient to keep eliza's matching and response data as
+    # globals rather than config.
+    - linters: [gochecknoglobals]
+      path: internal/eliza/globals.go
