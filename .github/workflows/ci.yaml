@@ -13,12 +13,6 @@ permissions: read-all
 jobs:
   ci:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version: [1.18.x]
-        include:
-          - go: 1.18.x
-            latest: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -26,8 +20,6 @@ jobs:
           fetch-depth: 1
       - name: Install Go
         uses: actions/setup-go@v3
-        with:
-          go-version: ${{ matrix.go-version }}
       - name: Cache
         uses: actions/cache@v2
         with:
@@ -37,7 +29,4 @@ jobs:
       - name: Test
         run: make test && make checkgenerate
       - name: Lint
-        # Often, lint & gofmt guidelines depend on the Go version. To prevent
-        # conflicting guidance, run only on the most recent supported version.
-        if: matrix.latest
         run: make lint
