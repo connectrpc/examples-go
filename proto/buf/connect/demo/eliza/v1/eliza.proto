@@ -20,4 +20,4 @@ syntax = "proto3";
 // superficiality of human-computer communication. DOCTOR simulates a
 // psychotherapist, and is commonly found as an Easter egg in emacs
 // distributions.
-package connect.demo.eliza.v1;
+package buf.connect.demo.eliza.v1;
