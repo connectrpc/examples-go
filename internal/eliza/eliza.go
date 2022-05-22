@@ -23,13 +23,16 @@ import (
 // ReplyTo will construct a reply for a given input using ELIZA's rules.
 func ReplyTo(input string) (string, bool) {
 	input = preprocess(input)
-	isQuitStatement := isQuitStatement(input)
+	if _, ok := goodbyeInputSet[input]; ok {
+		return randChoice(goodbyeResponses), true
+	}
+
 	if response, ok := lookupResponse(input); ok {
-		return response, isQuitStatement
+		return response, false
 	}
 
 	// If no patterns were matched, return a default response.
-	return randChoice(defaultResponses), isQuitStatement
+	return randChoice(defaultResponses), false
 }
 
 // lookupResponse does a lookup with regex
@@ -53,14 +56,6 @@ func lookupResponse(input string) (string, bool) {
 		}
 	}
 	return "", false
-}
-
-// isQuitStatement returns if the statement is a quit statement
-func isQuitStatement(statement string) bool {
-	statement = preprocess(statement)
-	compile := goodbyeInputRegex
-	match := compile.FindStringSubmatch(statement)
-	return len(match) > 0
 }
 
 // preprocess will do some normalization on a statement for better regex matching

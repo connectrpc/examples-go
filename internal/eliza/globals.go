@@ -18,7 +18,12 @@ import "regexp"
 
 // Goodbye input statements from the user which is considered a goodbye to
 // ELIZA.
-var goodbyeInputRegex = regexp.MustCompile(`(quit|exit|goodbye|bye)`)
+var goodbyeInputSet = map[string]struct{}{
+	"bye":     {},
+	"exit":    {},
+	"goodbye": {},
+	"quit":    {},
+}
 
 // Goodbye responses for ELIZA.
 var goodbyeResponses = []string{
@@ -184,6 +189,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Do you often feel %s?",
 		"When do you usually feel %s?",
 		"When you feel %s, what do you do?",
+		"%s? Tell me more.",
 	},
 	regexp.MustCompile(`i have (.*)`): {
 		"Why do you tell me that you've %s?",
@@ -247,7 +253,6 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Perhaps the answer lies within yourself?",
 		"Why don't you tell me?",
 	},
-	goodbyeInputRegex: goodbyeResponses,
 }
 
 // ELIZA default responses for the catch all case
