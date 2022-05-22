@@ -7,25 +7,8 @@ import (
 	"strings"
 )
 
-type Eliza interface {
-	Introduction() string
-	ReplyTo(input string) string
-}
-
-type eliza struct{}
-
-// NewEliza get an instance to converse with Eliza
-func NewEliza() Eliza {
-	return &eliza{}
-}
-
-// Introduction will return a random introductory sentence for ELIZA.
-func (e *eliza) Introduction() string {
-	return randChoice(introductions)
-}
-
 // ReplyTo will construct a reply for a given input using ELIZA's rules.
-func (e *eliza) ReplyTo(input string) string {
+func ReplyTo(input string) string {
 	input = preprocess(input)
 	if isQuitStatement(input) {
 		return randChoice(goodbyes)
