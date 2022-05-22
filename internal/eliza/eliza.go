@@ -24,7 +24,7 @@ import (
 func ReplyTo(input string) (string, bool) {
 	input = preprocess(input)
 	if _, ok := goodbyeInputSet[input]; ok {
-		return randChoice(goodbyeResponses), true
+		return randomElementFrom(goodbyeResponses), true
 	}
 
 	if response, ok := lookupResponse(input); ok {
@@ -32,7 +32,7 @@ func ReplyTo(input string) (string, bool) {
 	}
 
 	// If no patterns were matched, return a default response.
-	return randChoice(defaultResponses), false
+	return randomElementFrom(defaultResponses), false
 }
 
 // lookupResponse does a lookup with regex
@@ -48,7 +48,7 @@ func lookupResponse(input string) (string, bool) {
 			if len(matches) > 1 {
 				fragment = reflect(matches[1])
 			}
-			response := randChoice(responses)
+			response := randomElementFrom(responses)
 			if strings.Contains(response, "%s") {
 				response = fmt.Sprintf(response, fragment)
 			}
@@ -76,8 +76,8 @@ func reflect(fragment string) string {
 	return strings.Join(words, " ")
 }
 
-// randChoice returns a random element in the input array.
-func randChoice(list []string) string {
-	randIndex := rand.Intn(len(list))
-	return list[randIndex]
+// randomElementFrom returns a random element in the input array.
+func randomElementFrom(list []string) string {
+	random := rand.Intn(len(list))
+	return list[random]
 }
