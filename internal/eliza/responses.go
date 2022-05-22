@@ -1,18 +1,27 @@
-// Lightly modified from https://github.com/mattshiel/eliza-go
+// Copyright 2020-2022 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package eliza
 
 import "regexp"
 
-// Introduction phrases for ELIZA.
-var introductions = []string{
-	"Hello. How are you feeling today?",
-	"How do you do. Please tell me your problem.",
-	"Please tell me what's been bothering you.",
-	"Is something troubling you?",
-}
+// Goodbye input statements from the user which is considered a goodbye to
+// ELIZA.
+var goodbyeInputRegex = regexp.MustCompile(`(quit|exit|goodbye|bye)`)
 
-// Goodbye phrases for ELIZA.
-var goodbyes = []string{
+// Goodbye responses for ELIZA.
+var goodbyeResponses = []string{
 	"Goodbye. It was nice talking to you.",
 	"Thank you for talking with me.",
 	"Thank you, that will be $150. Have a good day!",
@@ -23,9 +32,8 @@ var goodbyes = []string{
 	"Good-bye.",
 }
 
-// Random lookup ordering here but it should _add_ to the
-// realism.
-var psychobabble = map[*regexp.Regexp][]string{
+// Request phrase to response phrases as a lookup table.
+var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 	regexp.MustCompile(`i need (.*)`): {
 		"Why do you need %s?",
 		"Would it really help you to get %s?",
@@ -239,9 +247,10 @@ var psychobabble = map[*regexp.Regexp][]string{
 		"Perhaps the answer lies within yourself?",
 		"Why don't you tell me?",
 	},
+	goodbyeInputRegex: goodbyeResponses,
 }
 
-// ELIZA default responses
+// ELIZA default responses for the catch all case
 var defaultResponses = []string{
 	"Please tell me more.",
 	"Let's change focus a bit... Tell me about your family.",
@@ -251,14 +260,6 @@ var defaultResponses = []string{
 	"I see. And what does that tell you?",
 	"How does that make you feel?",
 	"How do you feel when you say that?",
-}
-
-// Statement inputs which would cause ELIZA to say goodbye
-var quitStatements = []string{
-	"goodbye",
-	"bye",
-	"quit",
-	"exit",
 }
 
 // This is a table to reflect words in question fragments inside the response.

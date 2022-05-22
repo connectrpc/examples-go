@@ -1,4 +1,17 @@
-// Lightly modified from https://github.com/mattshiel/eliza-go
+// Copyright 2020-2022 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package eliza
 
 import (
@@ -8,25 +21,25 @@ import (
 )
 
 // ReplyTo will construct a reply for a given input using ELIZA's rules.
-func ReplyTo(input string) string {
+func ReplyTo(input string) (string, bool) {
 	input = preprocess(input)
-	if isQuitStatement(input) {
-		return randChoice(goodbyes)
-	}
-
+	isQuitStatement := isQuitStatement(input)
 	if response, ok := lookupResponse(input); ok {
-		return response
+		return response, isQuitStatement
 	}
 
 	// If no patterns were matched, return a default response.
-	return randChoice(defaultResponses)
+	return randChoice(defaultResponses), isQuitStatement
 }
 
 // lookupResponse does a lookup with regex
 func lookupResponse(input string) (string, bool) {
-	// Look up responses from psychobabble mapping
-	for re, responses := range psychobabble {
+	// Look up responses from requestInputRegexToResponseOptions mapping
+	for re, responses := range requestInputRegexToResponseOptions {
 		matches := re.FindStringSubmatch(input)
+		if len(matches) < 1 {
+			continue
+		}
 		if len(matches) > 0 {
 			var fragment string
 			if len(matches) > 1 {
@@ -45,12 +58,9 @@ func lookupResponse(input string) (string, bool) {
 // isQuitStatement returns if the statement is a quit statement
 func isQuitStatement(statement string) bool {
 	statement = preprocess(statement)
-	for _, quitStatement := range quitStatements {
-		if statement == quitStatement {
-			return true
-		}
-	}
-	return false
+	compile := goodbyeInputRegex
+	match := compile.FindStringSubmatch(statement)
+	return len(match) > 0
 }
 
 // preprocess will do some normalization on a statement for better regex matching
