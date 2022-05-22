@@ -72,7 +72,7 @@ func preprocess(input string) string {
 
 // reflect flips a few words in an input fragment (such as "I" -> "you").
 func reflect(fragment string) string {
-	words := strings.Split(fragment, " ")
+	words := strings.Fields(fragment)
 	for i, word := range words {
 		if reflectedWord, ok := reflectedWords[word]; ok {
 			words[i] = reflectedWord
