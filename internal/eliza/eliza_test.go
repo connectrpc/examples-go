@@ -44,8 +44,10 @@ func TestDefaultAnswers(t *testing.T) {
 	t.Parallel()
 	response, _ := ReplyTo("i have")
 	assert.True(t, contains(defaultResponses, response))
+
 	response, _ = ReplyTo("i have ")
 	assert.True(t, contains(defaultResponses, response))
+
 	response, _ = ReplyTo("i have  ")
 	assert.True(t, contains(defaultResponses, response))
 }
@@ -63,6 +65,7 @@ func TestReflectiveAnswers(t *testing.T) {
 	t.Parallel()
 	response, _ := ReplyTo("i have a problem")
 	assert.True(t, strings.Contains(response, "a problem"))
+
 	response, _ = ReplyTo("i have a problem with your tone")
 	assert.True(t, strings.Contains(response, "a problem with my tone"))
 }
