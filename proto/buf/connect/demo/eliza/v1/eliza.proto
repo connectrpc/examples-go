@@ -22,23 +22,28 @@ syntax = "proto3";
 // distributions.
 package buf.connect.demo.eliza.v1;
 
+// ElizaService provides a way to talk to ELIZA.
 service ElizaService {
   rpc Say(SayRequest) returns (SayResponse) {}
   rpc Converse(stream ConverseRequest) returns (stream ConverseResponse) {}
 }
 
+// SayRequest describes the sentence said to ELIZA.
 message SayRequest {
   string sentence = 1;
 }
 
+// SayResponse describes the sentence responded by ELIZA.
 message SayResponse {
   string sentence = 1;
 }
 
+// ConverseRequest describes the sentence said to ELIZA.
 message ConverseRequest {
   string sentence = 1;
 }
 
+// ConverseResponse describes the sentence responded by ELIZA.
 message ConverseResponse {
   string sentence = 1;
 }
