@@ -22,20 +22,23 @@ syntax = "proto3";
 // distributions.
 package buf.connect.demo.eliza.v1;
 
-service Eliza {
-  rpc Say(SayRequest) returns (Response) {}
-  rpc Monologue(MonologueRequest) returns (stream Response) {}
-  rpc Converse(stream SayRequest) returns (stream Response) {}
+service ElizaService {
+  rpc Say(SayRequest) returns (SayResponse) {}
+  rpc Converse(stream ConverseRequest) returns (stream ConverseResponse) {}
 }
 
 message SayRequest {
   string sentence = 1;
 }
 
-message MonologueRequest {
-  repeated string statements = 1;
+message SayResponse {
+  string response = 1;
 }
 
-message Response {
+message ConverseRequest {
+  string sentence = 1;
+}
+
+message ConverseResponse {
   string response = 1;
 }
