@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/bufbuild/connect-demo/internal/eliza"
 	"log"
 	"net/http"
 
@@ -37,18 +38,35 @@ type ElizaServer struct {
 // response given a one sentence request.
 func (e *ElizaServer) Say(ctx context.Context, req *connect.Request[elizav1.SayRequest]) (*connect.Response[elizav1.SayResponse], error) {
 	log.Println("Saying....")
-	log.Println("Request headers: ", req.Header())
-
+	sentenceInput := req.Msg.Sentence
+	reply, _ := eliza.Reply(sentenceInput)
 	res := connect.NewResponse(&elizav1.SayResponse{
-		Sentence: "hello",
+		Sentence: reply,
 	})
 	return res, nil
 }
 
 // Converse is a bi-directional request demo. This method should allow for
 // many requests and many responses.
-func (e *ElizaServer) Converse(context.Context, *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse]) error {
+func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse]) error {
 	log.Println("Conversing....")
+	for {
+		receive, err := stream.Receive()
+		if err != nil {
+			return err
+		}
+		sentenceInput := receive.Sentence
+		reply, endSession := eliza.Reply(sentenceInput)
+		err = stream.Send(&elizav1.ConverseResponse{
+			Sentence: reply,
+		})
+		if err != nil {
+			return err
+		}
+		if endSession {
+			return nil
+		}
+	}
 	return fmt.Errorf("")
 }
 
