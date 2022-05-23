@@ -47,6 +47,20 @@ func TestHello(t *testing.T) {
 	assert.Equal(t, "Hello, how are you feeling today?", response)
 }
 
+func TestReflectiveAnswers(t *testing.T) {
+	rand.Seed(1234) // set random seed to pin responses
+	response, _ := ReplyTo("i have")
+	assert.True(t, contains(defaultResponses, response))
+	response, _ = ReplyTo("i have ")
+	assert.True(t, contains(defaultResponses, response))
+	response, _ = ReplyTo("i have  ")
+	assert.True(t, contains(defaultResponses, response))
+	response, _ = ReplyTo("i have a problem")
+	assert.Equal(t, response, "Why do you tell me that you've a problem?")
+	response, _ = ReplyTo("i have a problem with your tone")
+	assert.Equal(t, response, "Have you really a problem with my tone?")
+}
+
 func contains(slice []string, element string) bool {
 	for _, value := range slice {
 		if value == element {
