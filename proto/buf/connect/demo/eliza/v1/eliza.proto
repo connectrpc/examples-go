@@ -14,10 +14,39 @@
 
 syntax = "proto3";
 
-// This package defines the Eliza service, which is a port of the DOCTOR script
-// for Joseph Weizenbaum's original ELIZA program. Created in the mid-1960s at
-// the MIT Artificial Intelligence Laboratory, ELIZA demonstrates the
-// superficiality of human-computer communication. DOCTOR simulates a
-// psychotherapist, and is commonly found as an Easter egg in emacs
-// distributions.
 package buf.connect.demo.eliza.v1;
+
+// ElizaService provides a way to talk to the ELIZA, which is a port of
+// the DOCTOR script for Joseph Weizenbaum's original ELIZA program.
+// Created in the mid-1960s at the MIT Artificial Intelligence Laboratory,
+// ELIZA demonstrates the superficiality of human-computer communication.
+// DOCTOR simulates a psychotherapist, and is commonly found as an Easter
+// egg in emacs distributions.
+service ElizaService {
+  // Say is a unary request demo. This method should allow for a one sentence
+  // response given a one sentence request.
+  rpc Say(SayRequest) returns (SayResponse) {}
+  // Converse is a bi-directional request demo. This method should allow for
+  // many requests and many responses.
+  rpc Converse(stream ConverseRequest) returns (stream ConverseResponse) {}
+}
+
+// SayRequest describes the sentence said to the ELIZA program.
+message SayRequest {
+  string sentence = 1;
+}
+
+// SayResponse describes the sentence responded by the ELIZA program.
+message SayResponse {
+  string sentence = 1;
+}
+
+// ConverseRequest describes the sentence said to the ELIZA program.
+message ConverseRequest {
+  string sentence = 1;
+}
+
+// ConverseResponse describes the sentence responded by the ELIZA program.
+message ConverseResponse {
+  string sentence = 1;
+}
