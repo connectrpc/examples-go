@@ -15,7 +15,7 @@
 package eliza
 
 import (
-	"math/rand"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,29 +40,31 @@ func TestReplyToGoodbyes(t *testing.T) {
 	assert.True(t, contains(goodbyeResponses, response))
 }
 
-func TestHello(t *testing.T) {
+func TestDefaultAnswers(t *testing.T) {
 	t.Parallel()
-	rand.Seed(1234) // set random seed to pin responses
-	response, _ := ReplyTo("hello eliza!")
-	assert.Equal(t, "Hello, how are you feeling today?", response)
-
-	response, _ = ReplyTo("hello there")
-	assert.Equal(t, "Hello, how are you feeling today?", response)
-}
-
-func TestReflectiveAnswers(t *testing.T) {
-	t.Parallel()
-	rand.Seed(1234) // set random seed to pin responses
 	response, _ := ReplyTo("i have")
 	assert.True(t, contains(defaultResponses, response))
 	response, _ = ReplyTo("i have ")
 	assert.True(t, contains(defaultResponses, response))
 	response, _ = ReplyTo("i have  ")
 	assert.True(t, contains(defaultResponses, response))
-	response, _ = ReplyTo("i have a problem")
-	assert.Equal(t, response, "Why do you tell me that you've a problem?")
+}
+
+func TestHello(t *testing.T) {
+	t.Parallel()
+	response, _ := ReplyTo("hello eliza!")
+	assert.True(t, strings.Contains(response, "Hello"))
+
+	response, _ = ReplyTo("hello there")
+	assert.True(t, strings.Contains(response, "Hello"))
+}
+
+func TestReflectiveAnswers(t *testing.T) {
+	t.Parallel()
+	response, _ := ReplyTo("i have a problem")
+	assert.True(t, strings.Contains(response, "a problem"))
 	response, _ = ReplyTo("i have a problem with your tone")
-	assert.Equal(t, response, "Have you really a problem with my tone?")
+	assert.True(t, strings.Contains(response, "a problem with my tone"))
 }
 
 func contains(slice []string, element string) bool {

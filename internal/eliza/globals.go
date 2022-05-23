@@ -99,7 +99,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 	},
 	regexp.MustCompile(`^hello(.*)`): {
 		"Hello... I'm glad you could drop by today.",
-		"Hi there... how are you today?",
+		"Hello there... how are you today?",
 		"Hello, how are you feeling today?",
 	},
 	regexp.MustCompile(`^hi(.*)`): {
