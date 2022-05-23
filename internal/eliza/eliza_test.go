@@ -23,58 +23,35 @@ import (
 
 func TestReplyToGoodbyes(t *testing.T) {
 	t.Parallel()
-	response, end := ReplyTo("bye")
-	assert.True(t, end)
-	assert.True(t, contains(goodbyeResponses, response))
-
-	response, end = ReplyTo("quit")
-	assert.True(t, end)
-	assert.True(t, contains(goodbyeResponses, response))
-
-	response, end = ReplyTo("exit")
-	assert.True(t, end)
-	assert.True(t, contains(goodbyeResponses, response))
-
-	response, end = ReplyTo("goodbye")
-	assert.True(t, end)
-	assert.True(t, contains(goodbyeResponses, response))
+	for _, input := range []string{"bye", "quit", "exit", "goodbye"} {
+		response, end := Reply(input)
+		assert.True(t, end)
+		assert.Contains(t, goodbyeResponses, response)
+	}
 }
 
 func TestDefaultAnswers(t *testing.T) {
 	t.Parallel()
-	response, _ := ReplyTo("i have")
-	assert.True(t, contains(defaultResponses, response))
-
-	response, _ = ReplyTo("i have ")
-	assert.True(t, contains(defaultResponses, response))
-
-	response, _ = ReplyTo("i have  ")
-	assert.True(t, contains(defaultResponses, response))
+	for i := 0; i < 3; i++ {
+		response, _ := Reply("i have" + strings.Repeat(" ", i))
+		assert.Contains(t, defaultResponses, response)
+	}
 }
 
 func TestHello(t *testing.T) {
 	t.Parallel()
-	response, _ := ReplyTo("hello eliza!")
-	assert.True(t, strings.Contains(response, "Hello"))
+	response, _ := Reply("hello eliza!")
+	assert.Contains(t, response, "Hello")
 
-	response, _ = ReplyTo("hello there")
-	assert.True(t, strings.Contains(response, "Hello"))
+	response, _ = Reply("hello there")
+	assert.Contains(t, response, "Hello")
 }
 
 func TestReflectiveAnswers(t *testing.T) {
 	t.Parallel()
-	response, _ := ReplyTo("i have a problem")
-	assert.True(t, strings.Contains(response, "a problem"))
+	response, _ := Reply("i have a problem")
+	assert.Contains(t, response, "a problem")
 
-	response, _ = ReplyTo("i have a problem with your tone")
-	assert.True(t, strings.Contains(response, "a problem with my tone"))
-}
-
-func contains(slice []string, element string) bool {
-	for _, value := range slice {
-		if value == element {
-			return true
-		}
-	}
-	return false
+	response, _ = Reply("i have a problem with your tone")
+	assert.Contains(t, response, "a problem with my tone")
 }

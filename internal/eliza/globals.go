@@ -4,8 +4,7 @@ package eliza
 
 import "regexp"
 
-// Goodbye input statements from the user which is considered a goodbye to
-// ELIZA.
+// Input statements which terminate the session.
 var goodbyeInputSet = map[string]struct{}{
 	"bye":     {},
 	"exit":    {},
@@ -13,7 +12,7 @@ var goodbyeInputSet = map[string]struct{}{
 	"quit":    {},
 }
 
-// Goodbye responses for ELIZA.
+// End-of-session responses.
 var goodbyeResponses = []string{
 	"Goodbye. It was nice talking to you.",
 	"Thank you for talking with me.",
@@ -243,7 +242,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 	},
 }
 
-// ELIZA default responses for the catchall case.
+// Default responses when nothing more specific applies.
 var defaultResponses = []string{
 	"Please tell me more.",
 	"Let's change focus a bit... Tell me about your family.",
@@ -255,7 +254,7 @@ var defaultResponses = []string{
 	"How do you feel when you say that?",
 }
 
-// This is a table to reflect words in question fragments inside the response.
+// A table to reflect words in question fragments inside the response.
 // For example, the phrase "your jacket" in "I want your jacket" should be
 // reflected to "my jacket" in the response.
 var reflectedWords = map[string]string{

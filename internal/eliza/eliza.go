@@ -1,5 +1,8 @@
 // Lightly modified from https://github.com/mattshiel/eliza-go
 
+// Package eliza is a simple (and not very convincing) simulation of a
+// psychotherapist. It emulates the DOCTOR script written for Joseph
+// Weizenbaum's 1966 ELIZA natural language processing system.
 package eliza
 
 import (
@@ -8,8 +11,8 @@ import (
 	"strings"
 )
 
-// ReplyTo will construct a reply for a given input using ELIZA's rules.
-func ReplyTo(input string) (string, bool) {
+// Reply responds to a statement as a pyschotherapist might.
+func Reply(input string) (string, bool) {
 	input = preprocess(input)
 	if _, ok := goodbyeInputSet[input]; ok {
 		return randomElementFrom(goodbyeResponses), true
@@ -17,17 +20,15 @@ func ReplyTo(input string) (string, bool) {
 	return lookupResponse(input), false
 }
 
-// lookupResponse does a lookup with regex.
 func lookupResponse(input string) string {
-	// Look up responses from requestInputRegexToResponseOptions mapping.
 	for re, responses := range requestInputRegexToResponseOptions {
 		matches := re.FindStringSubmatch(input)
 		if len(matches) < 1 {
 			continue
 		}
-		// Select a random response.
 		response := randomElementFrom(responses)
-		// We attempt to reflect a response phrase, when the response has an entry point.
+		// If the response has an entry point, reflect the input phrase (so "I"
+		// becomes "you").
 		if !strings.Contains(response, "%s") {
 			return response
 		}
@@ -40,7 +41,6 @@ func lookupResponse(input string) string {
 	return randomElementFrom(defaultResponses)
 }
 
-// preprocess does some normalization on a statement for better regex matching.
 func preprocess(input string) string {
 	input = strings.TrimSpace(input)
 	input = strings.ToLower(input)
@@ -58,7 +58,6 @@ func reflect(fragment string) string {
 	return strings.Join(words, " ")
 }
 
-// randomElementFrom returns a random element in the input array.
 func randomElementFrom(list []string) string {
 	random := rand.Intn(len(list)) // nolint:gosec
 	return list[random]
