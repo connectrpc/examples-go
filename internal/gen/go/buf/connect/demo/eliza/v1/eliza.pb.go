@@ -18,13 +18,6 @@
 // 	protoc        (unknown)
 // source: buf/connect/demo/eliza/v1/eliza.proto
 
-// This package defines the Eliza service, which is a port of the DOCTOR script
-// for Joseph Weizenbaum's original ELIZA program. Created in the mid-1960s at
-// the MIT Artificial Intelligence Laboratory, ELIZA demonstrates the
-// superficiality of human-computer communication. DOCTOR simulates a
-// psychotherapist, and is commonly found as an Easter egg in emacs
-// distributions.
-
 package elizav1
 
 import (
@@ -41,7 +34,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// SayRequest describes the sentence said to ELIZA.
+// SayRequest describes the sentence said to the ELIZA program.
 type SayRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -89,7 +82,7 @@ func (x *SayRequest) GetSentence() string {
 	return ""
 }
 
-// SayResponse describes the sentence responded by ELIZA.
+// SayResponse describes the sentence responded by the ELIZA program.
 type SayResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -137,7 +130,7 @@ func (x *SayResponse) GetSentence() string {
 	return ""
 }
 
-// ConverseRequest describes the sentence said to ELIZA.
+// ConverseRequest describes the sentence said to the ELIZA program.
 type ConverseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -185,7 +178,7 @@ func (x *ConverseRequest) GetSentence() string {
 	return ""
 }
 
-// ConverseResponse describes the sentence responded by ELIZA.
+// ConverseResponse describes the sentence responded by the ELIZA program.
 type ConverseResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
