@@ -16,7 +16,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/bufbuild/connect-demo/internal/eliza"
 	"log"
 	"net/http"
@@ -67,7 +66,6 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 			return nil
 		}
 	}
-	return fmt.Errorf("")
 }
 
 func main() {
