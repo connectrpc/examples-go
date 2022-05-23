@@ -32,7 +32,7 @@ message SayRequest {
 }
 
 message SayResponse {
-  string response = 1;
+  string sentence = 1;
 }
 
 message ConverseRequest {
@@ -40,5 +40,5 @@ message ConverseRequest {
 }
 
 message ConverseResponse {
-  string response = 1;
+  string sentence = 1;
 }
