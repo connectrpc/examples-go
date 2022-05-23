@@ -21,3 +21,21 @@ syntax = "proto3";
 // psychotherapist, and is commonly found as an Easter egg in emacs
 // distributions.
 package buf.connect.demo.eliza.v1;
+
+service Eliza {
+  rpc Say(SayRequest) returns (Response) {}
+  rpc Monologue(MonologueRequest) returns (stream Response) {}
+  rpc Converse(stream SayRequest) returns (stream Response) {}
+}
+
+message SayRequest {
+  string sentence = 1;
+}
+
+message MonologueRequest {
+  repeated string statements = 1;
+}
+
+message Response {
+  string response = 1;
+}
