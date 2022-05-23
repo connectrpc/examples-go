@@ -44,6 +44,7 @@ linters:
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
     - gochecknoglobals  # internal/elize/globals.go exception
+    - gosec             # using math/rand
 issues:
   exclude:
     # Don't ban use of fmt.Errorf to create new errors, but the remaining
