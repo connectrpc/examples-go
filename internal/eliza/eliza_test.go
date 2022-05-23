@@ -15,12 +15,14 @@
 package eliza
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestReplyToGoodbyes(t *testing.T) {
+	t.Parallel()
 	response, end := ReplyTo("bye")
 	assert.True(t, end)
 	assert.True(t, contains(goodbyeResponses, response))
@@ -39,6 +41,7 @@ func TestReplyToGoodbyes(t *testing.T) {
 }
 
 func TestHello(t *testing.T) {
+	t.Parallel()
 	rand.Seed(1234) // set random seed to pin responses
 	response, _ := ReplyTo("hello eliza!")
 	assert.Equal(t, "Hello, how are you feeling today?", response)
@@ -48,6 +51,7 @@ func TestHello(t *testing.T) {
 }
 
 func TestReflectiveAnswers(t *testing.T) {
+	t.Parallel()
 	rand.Seed(1234) // set random seed to pin responses
 	response, _ := ReplyTo("i have")
 	assert.True(t, contains(defaultResponses, response))

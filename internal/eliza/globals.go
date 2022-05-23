@@ -255,7 +255,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 	},
 }
 
-// ELIZA default responses for the catch all case
+// ELIZA default responses for the catchall case.
 var defaultResponses = []string{
 	"Please tell me more.",
 	"Let's change focus a bit... Tell me about your family.",

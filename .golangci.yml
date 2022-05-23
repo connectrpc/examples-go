@@ -21,7 +21,7 @@ linters-settings:
   varnamelen:
     ignore-decls:
       - T any
-      - i int
+      - i in
       - wg sync.WaitGroup
 linters:
   enable-all: true
@@ -43,6 +43,7 @@ linters:
     - testpackage       # internal tests are fine
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
+    - gochecknoglobals  # internal/elize/globals.go exception
 issues:
   exclude:
     # Don't ban use of fmt.Errorf to create new errors, but the remaining

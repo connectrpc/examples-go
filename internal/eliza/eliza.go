@@ -29,23 +29,22 @@ func ReplyTo(input string) (string, bool) {
 	return lookupResponse(input), false
 }
 
-// lookupResponse does a lookup with regex
+// lookupResponse does a lookup with regex.
 func lookupResponse(input string) string {
-	// Look up responses from requestInputRegexToResponseOptions mapping
+	// Look up responses from requestInputRegexToResponseOptions mapping.
 	for re, responses := range requestInputRegexToResponseOptions {
 		matches := re.FindStringSubmatch(input)
 		if len(matches) < 1 {
 			continue
 		}
-		// Select a random response
+		// Select a random response.
 		response := randomElementFrom(responses)
-		// We attempt to reflect a response phrase, when the response has an entry point
+		// We attempt to reflect a response phrase, when the response has an entry point.
 		if !strings.Contains(response, "%s") {
 			return response
 		}
 		if len(matches) > 1 {
-			var fragment string
-			fragment = reflect(matches[1])
+			fragment := reflect(matches[1])
 			response = fmt.Sprintf(response, fragment)
 			return response
 		}
@@ -53,7 +52,7 @@ func lookupResponse(input string) string {
 	return randomElementFrom(defaultResponses)
 }
 
-// preprocess will do some normalization on a statement for better regex matching
+// preprocess will do some normalization on a statement for better regex matching.
 func preprocess(input string) string {
 	input = strings.TrimSpace(input)
 	input = strings.ToLower(input)
