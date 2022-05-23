@@ -60,6 +60,6 @@ func reflect(fragment string) string {
 
 // randomElementFrom returns a random element in the input array.
 func randomElementFrom(list []string) string {
-	random := rand.Intn(len(list))
+	random := rand.Intn(len(list)) // nolint:gosec
 	return list[random]
 }
