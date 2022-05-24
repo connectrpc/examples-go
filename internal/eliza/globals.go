@@ -176,7 +176,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Do you often feel %s?",
 		"When do you usually feel %s?",
 		"When you feel %s, what do you do?",
-		"%s? Tell me more.",
+		"Feeling %s? Tell me more.",
 	},
 	regexp.MustCompile(`i have (.*)`): {
 		"Why do you tell me that you've %s?",
