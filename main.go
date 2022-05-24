@@ -74,6 +74,10 @@ func (e *elizaServer) Converse(
 
 func main() {
 	mux := http.NewServeMux()
+	mux.Handle(
+		"/",
+		http.RedirectHandler("https://connect.build", http.StatusFound),
+	)
 	compress1KB := connect.WithCompressMinBytes(1024)
 	mux.Handle(elizav1connect.NewElizaServiceHandler(
 		&elizaServer{},
