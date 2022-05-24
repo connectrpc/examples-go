@@ -1,14 +1,14 @@
-ARG DOCKER_ORG
+# syntax=docker/dockerfile:1
+FROM golang:1.18-alpine AS builder
+RUN apk add --update --no-cache git && rm -rf /var/cache/apk/*
+WORKDIR /workspace
+COPY go.mod go.sum /workspace/
+RUN go mod download
+COPY main.go /workspace/
+COPY internal /workspace/internal
+RUN go build -o connect-demo .
 
-FROM $DOCKER_ORG/basebuild as builder
-
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 \
-    go build -ldflags "-s -w" -trimpath -o /go/bin/connectdemo main.go
-
-FROM alpine:3.15.4
-
-COPY --from=builder /go/bin/connectdemo /usr/local/bin/connectdemo
-
-ENTRYPOINT ["/usr/local/bin/connectdemo", "run"]
-CMD ["--log-format=json"]
+FROM alpine
+RUN apk add --update --no-cache ca-certificates tzdata && rm -rf /var/cache/apk/*
+COPY --from=builder /workspace/connect-demo /usr/local/bin/connect-demo
+CMD [ "/usr/local/bin/connect-demo" ]
