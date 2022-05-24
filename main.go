@@ -16,6 +16,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"io"
 	"net/http"
 	"time"
@@ -49,7 +50,7 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 	for {
 		receive, err := stream.Receive()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return nil
 			}
 			return err
