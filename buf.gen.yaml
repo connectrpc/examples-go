@@ -7,3 +7,6 @@ plugins:
   - name: go
     out: internal/gen/go
     opt: paths=source_relative
+  - name: connect-go
+    out: internal/gen/connect-go
+    opt: paths=source_relative
