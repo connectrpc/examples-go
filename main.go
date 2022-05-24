@@ -73,9 +73,13 @@ func (e *elizaServer) Converse(
 func main() {
 	mux := http.NewServeMux()
 	mux.Handle(elizav1connect.NewElizaServiceHandler(&elizaServer{}))
+
+	addr := "localhost:8080"
+	if port := os.Getenv("PORT"); port != "" {
+		addr = ":" + port
+	}
 	srv := &http.Server{
-		// TODO: use PORT from environment, with fallback.
-		Addr:              "localhost:9000",
+		Addr:              addr,
 		Handler:           h2c.NewHandler(mux, &http2.Server{}),
 		ReadHeaderTimeout: time.Second,
 		ReadTimeout:       60 * time.Second,
