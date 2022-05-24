@@ -49,6 +49,9 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 	for {
 		receive, err := stream.Receive()
 		if err != nil {
+			if err == io.EOF {
+				return nil
+			}
 			return err
 		}
 		sentenceInput := receive.Sentence
@@ -57,9 +60,6 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 			Sentence: reply,
 		})
 		if err != nil {
-			if err == io.EOF {
-				return nil
-			}
 			return err
 		}
 		if endSession {
