@@ -85,13 +85,13 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"What feelings do you have when you apologize?",
 	},
 	regexp.MustCompile(`^hello(.*)`): {
-		"Hello... I'm glad you could drop by today.",
-		"Hello there... how are you today?",
+		"Hello...I'm glad you could drop by today.",
+		"Hello there...how are you today?",
 		"Hello, how are you feeling today?",
 	},
 	regexp.MustCompile(`^hi(.*)`): {
-		"Hello... I'm glad you could drop by today.",
-		"Hi there... how are you today?",
+		"Hello...I'm glad you could drop by today.",
+		"Hi there...how are you today?",
 		"Hello, how are you feeling today?",
 	},
 	regexp.MustCompile(`^thanks(.*)`): {
@@ -103,13 +103,13 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Anytime!",
 	},
 	regexp.MustCompile(`^good morning(.*)`): {
-		"Good morning... I'm glad you could drop by today.",
-		"Good morning... how are you today?",
+		"Good morning...I'm glad you could drop by today.",
+		"Good morning...how are you today?",
 		"Good morning, how are you feeling today?",
 	},
 	regexp.MustCompile(`^good afternoon(.*)`): {
-		"Good afternoon... I'm glad you could drop by today.",
-		"Good afternoon... how are you today?",
+		"Good afternoon...I'm glad you could drop by today.",
+		"Good afternoon...how are you today?",
 		"Good afternoon, how are you feeling today?",
 	},
 	regexp.MustCompile(`I think (.*)`): {
@@ -245,7 +245,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 // Default responses when nothing more specific applies.
 var defaultResponses = []string{
 	"Please tell me more.",
-	"Let's change focus a bit... Tell me about your family.",
+	"Let's change focus a bit...Tell me about your family.",
 	"Can you elaborate on that?",
 	"I see.",
 	"Very interesting.",
