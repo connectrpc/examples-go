@@ -16,7 +16,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net/http"
 
 	"github.com/bufbuild/connect-demo/internal/eliza"
@@ -36,7 +35,6 @@ type ElizaServer struct {
 // Say is a unary request demo. This method should allow for a one sentence
 // response given a one sentence request.
 func (e *ElizaServer) Say(ctx context.Context, req *connect.Request[elizav1.SayRequest]) (*connect.Response[elizav1.SayResponse], error) {
-	log.Println("Saying....")
 	sentenceInput := req.Msg.Sentence
 	reply, _ := eliza.Reply(sentenceInput)
 	res := connect.NewResponse(&elizav1.SayResponse{
@@ -48,7 +46,6 @@ func (e *ElizaServer) Say(ctx context.Context, req *connect.Request[elizav1.SayR
 // Converse is a bi-directional request demo. This method should allow for
 // many requests and many responses.
 func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse]) error {
-	log.Println("Conversing....")
 	for {
 		receive, err := stream.Receive()
 		if err != nil {
@@ -69,7 +66,6 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 }
 
 func main() {
-	log.Println("Starting....")
 	// The business logic here is trivial, but the rest of the example is meant
 	// to be somewhat realistic. This server has basic timeouts configured, and
 	// it also exposes gRPC's server reflection and health check APIs.
@@ -82,12 +78,9 @@ func main() {
 	elizaServiceHandler := &ElizaServer{} // our business logic
 	path, handler := elizav1connect.NewElizaServiceHandler(elizaServiceHandler)
 	mux.Handle(path, handler)
-	err := http.ListenAndServe(
-		":9000",
+	_ = http.ListenAndServe(
+		"localhost:9000", // TODO: use PORT from terraform or default to 8080
 		// Use h2c so we can serve HTTP/2 without TLS.
 		h2c.NewHandler(mux, &http2.Server{}),
 	)
-	if err != nil {
-		log.Fatalln(err)
-	}
 }

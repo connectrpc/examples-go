@@ -54,6 +54,3 @@ issues:
     # globals rather than config.
     - linters: [gochecknoglobals]
       path: internal/eliza/globals.go
-    # Just for now since log is used for making sure things work.
-    - linters: [forbidigo]
-      path: main.go
