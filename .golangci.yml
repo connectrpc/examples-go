@@ -9,8 +9,9 @@ linters-settings:
       - 'github\.com/bufbuild/connect-demo\..*[pP]arams'
   forbidigo:
     forbid:
+      # Unlike most Buf projects, we're allowing the standard library's log
+      # package: this is a demo service, so let's keep it simple.
       - '^fmt\.Print'
-      - '^log\.'
       - '^print$'
       - '^println$'
       - '^panic$'

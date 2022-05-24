@@ -16,7 +16,15 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"io"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/bufbuild/connect-demo/internal/eliza"
 	"github.com/bufbuild/connect-demo/internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect"
@@ -26,38 +34,35 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
-// ElizaServer implements some trivial business logic. The Protobuf
-// definition for this API is in proto/buf/connect/demo/eliza/v1/eliza.proto.
-type ElizaServer struct {
-	elizav1connect.ElizaServiceHandler
-}
+type elizaServer struct{}
 
-// Say is a unary request demo. This method should allow for a one sentence
-// response given a one sentence request.
-func (e *ElizaServer) Say(ctx context.Context, req *connect.Request[elizav1.SayRequest]) (*connect.Response[elizav1.SayResponse], error) {
-	sentenceInput := req.Msg.Sentence
-	reply, _ := eliza.Reply(sentenceInput)
-	res := connect.NewResponse(&elizav1.SayResponse{
+func (e *elizaServer) Say(
+	ctx context.Context,
+	req *connect.Request[elizav1.SayRequest],
+) (*connect.Response[elizav1.SayResponse], error) {
+	reply, _ := eliza.Reply(req.Msg.Sentence) // ignore end-of-conversation detection
+	return connect.NewResponse(&elizav1.SayResponse{
 		Sentence: reply,
-	})
-	return res, nil
+	}), nil
 }
 
-// Converse is a bi-directional request demo. This method should allow for
-// many requests and many responses.
-func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse]) error {
+func (e *elizaServer) Converse(
+	ctx context.Context,
+	stream *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse],
+) error {
 	for {
-		receive, err := stream.Receive()
-		if err != nil {
+		if err := ctx.Err(); err != nil {
 			return err
 		}
-		sentenceInput := receive.Sentence
-		reply, endSession := eliza.Reply(sentenceInput)
-		err = stream.Send(&elizav1.ConverseResponse{
-			Sentence: reply,
-		})
-		if err != nil {
-			return err
+		request, err := stream.Receive()
+		if err != nil && errors.Is(err, io.EOF) {
+			return nil
+		} else if err != nil {
+			return fmt.Errorf("receive request: %w", err)
+		}
+		reply, endSession := eliza.Reply(request.Sentence)
+		if err := stream.Send(&elizav1.ConverseResponse{Sentence: reply}); err != nil {
+			return fmt.Errorf("send response: %w", err)
 		}
 		if endSession {
 			return nil
@@ -66,21 +71,29 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 }
 
 func main() {
-	// The business logic here is trivial, but the rest of the example is meant
-	// to be somewhat realistic. This server has basic timeouts configured, and
-	// it also exposes gRPC's server reflection and health check APIs.
-
-	// protoc-gen-connect-go generates constructors that return plain net/http
-	// Handlers, so they're compatible with most Go HTTP routers and middleware
-	// (for example, net/http's StripPrefix). Each handler automatically supports
-	// the Connect, gRPC, and gRPC-Web protocols.
 	mux := http.NewServeMux()
-	elizaServiceHandler := &ElizaServer{} // our business logic
-	path, handler := elizav1connect.NewElizaServiceHandler(elizaServiceHandler)
-	mux.Handle(path, handler)
-	_ = http.ListenAndServe(
-		"localhost:9000", // TODO: use PORT from terraform or default to 8080
-		// Use h2c so we can serve HTTP/2 without TLS.
-		h2c.NewHandler(mux, &http2.Server{}),
-	)
+	mux.Handle(elizav1connect.NewElizaServiceHandler(&elizaServer{}))
+	srv := &http.Server{
+		// TODO: use PORT from environment, with fallback.
+		Addr:              "localhost:9000",
+		Handler:           h2c.NewHandler(mux, &http2.Server{}),
+		ReadHeaderTimeout: time.Second,
+		ReadTimeout:       60 * time.Second,
+		WriteTimeout:      60 * time.Second,
+		MaxHeaderBytes:    8 * 1024, // 8KiB
+	}
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("HTTP listen and serve: %v", err)
+		}
+	}()
+
+	<-signals
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("HTTP shutdown: %v", err) // nolint:gocritic
+	}
 }
