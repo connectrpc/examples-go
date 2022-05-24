@@ -30,6 +30,8 @@ import (
 	"github.com/bufbuild/connect-demo/internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect"
 	elizav1 "github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1"
 	connect "github.com/bufbuild/connect-go"
+	grpchealth "github.com/bufbuild/connect-grpchealth-go"
+	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -72,7 +74,19 @@ func (e *elizaServer) Converse(
 
 func main() {
 	mux := http.NewServeMux()
-	mux.Handle(elizav1connect.NewElizaServiceHandler(&elizaServer{}))
+	compress1KB := connect.WithCompressMinBytes(1024)
+	mux.Handle(elizav1connect.NewElizaServiceHandler(
+		&elizaServer{},
+		compress1KB,
+	))
+	mux.Handle(grpchealth.NewHandler(
+		grpchealth.NewStaticChecker(elizav1connect.ElizaServiceName),
+		compress1KB,
+	))
+	mux.Handle(grpcreflect.NewHandlerV1(
+		grpcreflect.NewStaticReflector(elizav1connect.ElizaServiceName),
+		compress1KB,
+	))
 
 	addr := "localhost:8080"
 	if port := os.Getenv("PORT"); port != "" {
