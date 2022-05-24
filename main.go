@@ -16,9 +16,7 @@ package main
 
 import (
 	"context"
-	"io"
 	"net/http"
-	"time"
 
 	"github.com/bufbuild/connect-demo/internal/eliza"
 	"github.com/bufbuild/connect-demo/internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect"
@@ -30,7 +28,9 @@ import (
 
 // ElizaServer implements some trivial business logic. The Protobuf
 // definition for this API is in proto/buf/connect/demo/eliza/v1/eliza.proto.
-type ElizaServer struct{}
+type ElizaServer struct {
+	elizav1connect.ElizaServiceHandler
+}
 
 // Say is a unary request demo. This method should allow for a one sentence
 // response given a one sentence request.
@@ -57,9 +57,6 @@ func (e *ElizaServer) Converse(ctx context.Context, stream *connect.BidiStream[e
 			Sentence: reply,
 		})
 		if err != nil {
-			if err == io.EOF {
-				return nil
-			}
 			return err
 		}
 		if endSession {
@@ -81,12 +78,9 @@ func main() {
 	elizaServiceHandler := &ElizaServer{} // our business logic
 	path, handler := elizav1connect.NewElizaServiceHandler(elizaServiceHandler)
 	mux.Handle(path, handler)
-	server := &http.Server{
-		Addr:           "localhost:9000",                     // TODO: use PORT from terraform or default to 8080
-		Handler:        h2c.NewHandler(mux, &http2.Server{}), // Use h2c so we can serve HTTP/2 without TLS.
-		ReadTimeout:    2500 * time.Millisecond,
-		WriteTimeout:   5 * time.Second,
-		MaxHeaderBytes: 8 * 1024, // 8KiB, gRPC's recommendation
-	}
-	_ = server.ListenAndServe()
+	_ = http.ListenAndServe(
+		"localhost:9000", // TODO: use PORT from terraform or default to 8080
+		// Use h2c so we can serve HTTP/2 without TLS.
+		h2c.NewHandler(mux, &http2.Server{}),
+	)
 }
