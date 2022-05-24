@@ -44,6 +44,7 @@ func lookupResponse(input string) string {
 func preprocess(input string) string {
 	input = strings.TrimSpace(input)
 	input = strings.ToLower(input)
+	input = strings.Trim(input, `.!?'"`)
 	return input
 }
 
