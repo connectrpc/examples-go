@@ -69,5 +69,5 @@ We're much more likely to approve your changes if you:
 
 [fork]: https://github.com/bufbuild/connect-demo/fork
 [open-issue]: https://github.com/bufbuild/connect-demo/issues/new
-[cla]: https://cla-assistant.io/bufbuild/buf
+[cla]: https://cla-assistant.io/bufbuild/connect-demo
 [commit-message]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
