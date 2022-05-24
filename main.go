@@ -16,10 +16,10 @@ package main
 
 import (
 	"context"
-	"github.com/bufbuild/connect-demo/internal/eliza"
 	"log"
 	"net/http"
 
+	"github.com/bufbuild/connect-demo/internal/eliza"
 	"github.com/bufbuild/connect-demo/internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect"
 	elizav1 "github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1"
 	connect "github.com/bufbuild/connect-go"
