@@ -29,10 +29,6 @@ jobs:
           key: ${{ runner.os }}-connect-demo-ci-${{ hashFiles('**/go.sum') }}
           restore-keys: ${{ runner.os }}-connect-demo-ci-
       - name: Test
-        run: |
-          echo "~~~~~~~~~~~"
-          ls
-          echo "~~~~~~~~~~~"
-          make test && make checkgenerate
+        run: make test && make checkgenerate
       - name: Lint
         run: make lint
