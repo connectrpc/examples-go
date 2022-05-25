@@ -44,7 +44,7 @@ func TestElizaServer(t *testing.T) {
 			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
 				Sentence: "Hello",
 			}))
-			require.NotNil(t, err)
+			require.Nil(t, err)
 			assert.True(t, len(result.Msg.Sentence) > 0)
 		}
 	})
