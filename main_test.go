@@ -39,7 +39,7 @@ func TestElizaServer(t *testing.T) {
 	)
 	clients := []elizav1connect.ElizaServiceClient{connectClient, grpcClient}
 
-	t.Run("connect_say", func(t *testing.T) { // nolint: paralleltest
+	t.Run("say", func(t *testing.T) { // nolint: paralleltest
 		for _, client := range clients {
 			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
 				Sentence: "Hello",
@@ -48,7 +48,7 @@ func TestElizaServer(t *testing.T) {
 			assert.True(t, len(result.Msg.Sentence) > 0)
 		}
 	})
-	t.Run("connect_converse", func(t *testing.T) { // nolint: paralleltest
+	t.Run("converse", func(t *testing.T) { // nolint: paralleltest
 		for _, client := range clients {
 			sendValues := []string{"Hello!", "how are you doing?", "i have an issue with my bike", "bye"}
 			var receivedValues []string
