@@ -50,7 +50,7 @@ func TestElizaServer(t *testing.T) {
 	})
 	t.Run("converse", func(t *testing.T) { // nolint: paralleltest
 		for _, client := range clients {
-			sendValues := []string{"Hello!", "how are you doing?", "i have an issue with my bike", "bye"}
+			sendValues := []string{"Hello!", "How are you doing?", "I have an issue with my bike", "bye"}
 			var receivedValues []string
 			stream := client.Converse(context.Background())
 			var wg sync.WaitGroup
@@ -59,7 +59,7 @@ func TestElizaServer(t *testing.T) {
 				defer wg.Done()
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					require.NotNil(t, err, fmt.Sprintf(`failed for string setence: "%s"`, sentence))
+					require.NotNil(t, err, fmt.Sprintf(`failed for string sentence: "%s"`, sentence))
 				}
 				require.Nil(t, stream.CloseSend())
 			}()
@@ -71,6 +71,7 @@ func TestElizaServer(t *testing.T) {
 						break
 					}
 					require.NotNil(t, err)
+					assert.True(t, len(msg.Sentence) > 0)
 					receivedValues = append(receivedValues, msg.Sentence)
 				}
 				require.Nil(t, stream.CloseReceive())
