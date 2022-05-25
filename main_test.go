@@ -70,10 +70,10 @@ func TestElizaServer(t *testing.T) {
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					assert.NotNil(t, err)
+					require.NotNil(t, err)
 					receivedValues = append(receivedValues, msg.Sentence)
 				}
-				assert.Nil(t, stream.CloseReceive())
+				require.Nil(t, stream.CloseReceive())
 			}()
 			wg.Wait()
 			assert.Equal(t, len(receivedValues), len(sendValues))
