@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-print-directory
 BIN=.tmp/bin
 COPYRIGHT_YEARS := 2022
-LICENSE_IGNORE := -e /testdata/ ./internal/eliza/eliza.go ./internal/eliza/globals.go
+LICENSE_IGNORE := -e /testdata/ -e internal/eliza/eliza.go -e internal/eliza/globals.go
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
 
