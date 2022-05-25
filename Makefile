@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-print-directory
 BIN=.tmp/bin
 COPYRIGHT_YEARS := 2022
-LICENSE_IGNORE := -e /testdata/ -e internal/eliza/eliza.go -e internal/eliza/globals.go -e internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect/eliza.connect.go
+LICENSE_IGNORE := -e /testdata/ -e internal/eliza/eliza.go -e internal/eliza/globals.go
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
 
@@ -49,7 +49,7 @@ lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
 .PHONY: generate
 generate: $(BIN)/buf $(BIN)/protoc-gen-go $(BIN)/protoc-gen-connect-go $(BIN)/license-header ## Regenerate code and licenses
 	rm -rf internal/gen
-	PATH=$(BIN) $(BIN)/buf generate
+	PATH=$(BIN) $(BIN)/buf generatex
 	@# We want to operate on a list of modified and new files, excluding
 	@# deleted and ignored files. git-ls-files can't do this alone. comm -23 takes
 	@# two files and prints the union, dropping lines common to both (-3) and
