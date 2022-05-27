@@ -1,9 +1,15 @@
 github.com/bufbuild/connect-go v0.0.0-20220520175512-2b3d3442ffb8 h1:ZaD9cVYESl0sBAvcpmSO4wRbOSwS32F5wNPrnDw1XdE=
 github.com/bufbuild/connect-go v0.0.0-20220520175512-2b3d3442ffb8/go.mod h1:BajZGyRXK+Oq6Ddkm7atQ1Tu4W92OMpam7vyhFIf0ww=
+github.com/bufbuild/connect-go v0.0.0-20220524210034-056cb3a0963e h1:+LUoYk8C6k/ZOl7maYK/9d0aKxPFCEnRrO9Kg3bmVb4=
+github.com/bufbuild/connect-go v0.0.0-20220524210034-056cb3a0963e/go.mod h1:BajZGyRXK+Oq6Ddkm7atQ1Tu4W92OMpam7vyhFIf0ww=
 github.com/bufbuild/connect-grpchealth-go v0.0.0-20220524012732-dd62e6eaf140 h1:4V1jy01CRXS4kQBDjR9idyEB90SAqNpPWerJgtyaPOo=
 github.com/bufbuild/connect-grpchealth-go v0.0.0-20220524012732-dd62e6eaf140/go.mod h1:vx/DSeCBZxGx/apYjVGxos04rsbfH4hqOqD7zGLwf1s=
+github.com/bufbuild/connect-grpchealth-go v0.0.0-20220525005534-8bbcf99ad645 h1:c3wFk0tpm27jmYoASyXNvJQyE/y5LIOWBARd91cfrOU=
+github.com/bufbuild/connect-grpchealth-go v0.0.0-20220525005534-8bbcf99ad645/go.mod h1:vx/DSeCBZxGx/apYjVGxos04rsbfH4hqOqD7zGLwf1s=
 github.com/bufbuild/connect-grpcreflect-go v0.0.0-20220524012640-5e9485b6dcde h1:s3ostTzfjkVGCplr/UlAY3rzlgWRD7hrHIN3cyjQefg=
 github.com/bufbuild/connect-grpcreflect-go v0.0.0-20220524012640-5e9485b6dcde/go.mod h1:JgojtoBmVInpRaeLAvnGwQAXLni0H0swrLwXKIy5/yM=
+github.com/bufbuild/connect-grpcreflect-go v0.0.0-20220525013314-21c05925a10b h1:RDMKTaV3bmBsF9ZfU/v0+YeGEcguUak46sRmmhSYefY=
+github.com/bufbuild/connect-grpcreflect-go v0.0.0-20220525013314-21c05925a10b/go.mod h1:JgojtoBmVInpRaeLAvnGwQAXLni0H0swrLwXKIy5/yM=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -17,6 +23,8 @@ github.com/stretchr/testify v1.7.1 h1:5TQK59W5E3v0r2duFAb7P95B6hEeOyEnHRa8MjYSMT
 github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 h1:NWy5+hlRbC7HK+PmcXVUmW1IMyFce7to56IUvhUFm7Y=
 golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
+golang.org/x/net v0.0.0-20220524220425-1d687d428aca h1:xTaFYiPROfpPhqrfTIDXj0ri1SpfueYT951s4bAuDO8=
+golang.org/x/net v0.0.0-20220524220425-1d687d428aca/go.mod h1:CfG3xpIq0wQ8r1q4Su4UZFWDARRcnwPjda9FqA0JpMk=
 golang.org/x/text v0.3.7 h1:olpwvP2KacW1ZWvsR7uQhoyTYvKAupfQrRGBFM352Gk=
 golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
 golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
