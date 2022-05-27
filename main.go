@@ -27,8 +27,8 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-demo/internal/eliza"
-	"github.com/bufbuild/connect-demo/internal/gen/connect/buf/connect/demo/eliza/v1/elizav1connect"
-	elizav1 "github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1"
+	elizav1 "github.com/bufbuild/connect-demo/internal/gen/buf/connect/demo/eliza/v1"
+	"github.com/bufbuild/connect-demo/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
 	"github.com/bufbuild/connect-go"
 	grpchealth "github.com/bufbuild/connect-grpchealth-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
