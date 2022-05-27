@@ -24,8 +24,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/bufbuild/connect-demo/internal/gen/connect/buf/connect/demo/eliza/v1/elizav1connect"
 	elizav1 "github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1"
+	"github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1/elizav1connect"
 	"github.com/bufbuild/connect-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
