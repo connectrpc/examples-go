@@ -87,7 +87,10 @@ func main() {
 		grpcreflect.NewStaticReflector(elizav1connect.ElizaServiceName),
 		compress1KB,
 	))
-
+	mux.Handle(grpcreflect.NewHandlerV1Alpha(
+		grpcreflect.NewStaticReflector(elizav1connect.ElizaServiceName),
+		compress1KB,
+	))
 	addr := "localhost:8080"
 	if port := os.Getenv("PORT"); port != "" {
 		addr = ":" + port
