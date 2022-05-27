@@ -1,7 +1,8 @@
-# syntax=docker/dockerfile:1
 FROM golang:1.18-alpine AS builder
-RUN apk add --update --no-cache git && rm -rf /var/cache/apk/*
+
 WORKDIR /workspace
+
+RUN apk add --update --no-cache git && rm -rf /var/cache/apk/*
 COPY go.mod go.sum /workspace/
 RUN go mod download
 COPY main.go /workspace/
