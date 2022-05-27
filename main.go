@@ -27,7 +27,7 @@ import (
 	"time"
 
 	"github.com/bufbuild/connect-demo/internal/eliza"
-	"github.com/bufbuild/connect-demo/internal/gen/connect-go/buf/connect/demo/eliza/v1/elizav1connect"
+	"github.com/bufbuild/connect-demo/internal/gen/connect/buf/connect/demo/eliza/v1/elizav1connect"
 	elizav1 "github.com/bufbuild/connect-demo/internal/gen/go/buf/connect/demo/eliza/v1"
 	"github.com/bufbuild/connect-go"
 	grpchealth "github.com/bufbuild/connect-grpchealth-go"
@@ -74,6 +74,10 @@ func (e *elizaServer) Converse(
 
 func main() {
 	mux := http.NewServeMux()
+	mux.Handle(
+		"/",
+		http.RedirectHandler("https://connect.build", http.StatusFound),
+	)
 	compress1KB := connect.WithCompressMinBytes(1024)
 	mux.Handle(elizav1connect.NewElizaServiceHandler(
 		&elizaServer{},
@@ -99,8 +103,8 @@ func main() {
 		Addr:              addr,
 		Handler:           h2c.NewHandler(mux, &http2.Server{}),
 		ReadHeaderTimeout: time.Second,
-		ReadTimeout:       60 * time.Second,
-		WriteTimeout:      60 * time.Second,
+		ReadTimeout:       5 * time.Minute,
+		WriteTimeout:      5 * time.Minute,
 		MaxHeaderBytes:    8 * 1024, // 8KiB
 	}
 	signals := make(chan os.Signal, 1)

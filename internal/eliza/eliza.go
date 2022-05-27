@@ -1,9 +1,25 @@
-// Lightly modified from https://github.com/mattshiel/eliza-go
+// Copyright 2022 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 // Package eliza is a simple (and not very convincing) simulation of a
 // psychotherapist. It emulates the DOCTOR script written for Joseph
 // Weizenbaum's 1966 ELIZA natural language processing system.
 package eliza
+
+// Copied from from https://github.com/mattshiel/eliza-go and modified.
+//
+// See https://github.com/mattshiel/eliza-go/blob/master/LICENSE.
 
 import (
 	"fmt"
@@ -42,9 +58,7 @@ func lookupResponse(input string) string {
 }
 
 func preprocess(input string) string {
-	input = strings.TrimSpace(input)
-	input = strings.ToLower(input)
-	return input
+	return strings.Trim(strings.ToLower(strings.TrimSpace(input)), `.!?'"`)
 }
 
 // reflect flips a few words in an input fragment (such as "I" -> "you").
@@ -59,6 +73,5 @@ func reflect(fragment string) string {
 }
 
 func randomElementFrom(list []string) string {
-	random := rand.Intn(len(list)) // nolint:gosec
-	return list[random]
+	return list[rand.Intn(len(list))] // nolint:gosec
 }

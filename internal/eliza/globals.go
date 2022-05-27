@@ -1,4 +1,20 @@
-// Lightly modified from https://github.com/mattshiel/eliza-go
+// Copyright 2022 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// Copied from https://github.com/mattshiel/eliza-go and modified.
+//
+// See https://github.com/mattshiel/eliza-go/blob/master/LICENSE.
 
 package eliza
 
@@ -85,13 +101,13 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"What feelings do you have when you apologize?",
 	},
 	regexp.MustCompile(`^hello(.*)`): {
-		"Hello... I'm glad you could drop by today.",
-		"Hello there... how are you today?",
+		"Hello...I'm glad you could drop by today.",
+		"Hello there...how are you today?",
 		"Hello, how are you feeling today?",
 	},
 	regexp.MustCompile(`^hi(.*)`): {
-		"Hello... I'm glad you could drop by today.",
-		"Hi there... how are you today?",
+		"Hello...I'm glad you could drop by today.",
+		"Hi there...how are you today?",
 		"Hello, how are you feeling today?",
 	},
 	regexp.MustCompile(`^thanks(.*)`): {
@@ -103,13 +119,13 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Anytime!",
 	},
 	regexp.MustCompile(`^good morning(.*)`): {
-		"Good morning... I'm glad you could drop by today.",
-		"Good morning... how are you today?",
+		"Good morning...I'm glad you could drop by today.",
+		"Good morning...how are you today?",
 		"Good morning, how are you feeling today?",
 	},
 	regexp.MustCompile(`^good afternoon(.*)`): {
-		"Good afternoon... I'm glad you could drop by today.",
-		"Good afternoon... how are you today?",
+		"Good afternoon...I'm glad you could drop by today.",
+		"Good afternoon...how are you today?",
 		"Good afternoon, how are you feeling today?",
 	},
 	regexp.MustCompile(`I think (.*)`): {
@@ -176,7 +192,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 		"Do you often feel %s?",
 		"When do you usually feel %s?",
 		"When you feel %s, what do you do?",
-		"%s? Tell me more.",
+		"Feeling %s? Tell me more.",
 	},
 	regexp.MustCompile(`i have (.*)`): {
 		"Why do you tell me that you've %s?",
@@ -245,7 +261,7 @@ var requestInputRegexToResponseOptions = map[*regexp.Regexp][]string{
 // Default responses when nothing more specific applies.
 var defaultResponses = []string{
 	"Please tell me more.",
-	"Let's change focus a bit... Tell me about your family.",
+	"Let's change focus a bit...Tell me about your family.",
 	"Can you elaborate on that?",
 	"I see.",
 	"Very interesting.",
