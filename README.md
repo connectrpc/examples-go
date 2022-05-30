@@ -15,6 +15,9 @@ statements as a stereotypical psychotherapist might; since the original program
 was a demonstration of the superficiality of human-computer communication, the
 therapy is not very convincing.
 
+For more on Connect, see the [announcement blog post][blog], the documentation
+on [connect.build][docs], or the [`connect-go`][connect-go] repo.
+
 ## Example
 
 The service is running on https://demo.connect.build. To make an RPC with cURL,
@@ -45,8 +48,9 @@ $ grpcurl \
 
 Offered under the [Apache 2 license][license].
 
+[blog]: https://buf.build/blog/announcing-connect-a-better-grpc
+[connect-go]: https://github.com/bufbuild/connect-go
 [connect-protocol]: https://connect.build/docs/protocol
-[connect]: https://github.com/bufbuild/connect-go
 [docs]: https://connect.build
 [eliza]: https://en.wikipedia.org/wiki/ELIZA
 [grpc-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
