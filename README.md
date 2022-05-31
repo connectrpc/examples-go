@@ -48,7 +48,7 @@ $ grpcurl \
 
 Offered under the [Apache 2 license][license].
 
-[blog]: https://buf.build/blog/announcing-connect-a-better-grpc
+[blog]: https://buf.build/blog/connect-a-better-grpc
 [connect-go]: https://github.com/bufbuild/connect-go
 [connect-protocol]: https://connect.build/docs/protocol
 [docs]: https://connect.build
