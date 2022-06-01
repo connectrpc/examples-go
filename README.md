@@ -4,9 +4,9 @@ connect-demo
 [![Build](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml)
 [![Report Card](https://goreportcard.com/badge/github.com/bufbuild/connect-demo)](https://goreportcard.com/report/github.com/bufbuild/connect-demo)
 
-`connect-demo` is an example RPC service built with [Connect][docs]. Its API is
-defined by a [Protocol Buffer schema][schema], and the service supports the
-[gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
+`connect-demo` is an example RPC service built with [`connect-go`][connect-go].
+Its API is defined by a [Protocol Buffer schema][schema], and the service
+supports the [gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
 protocols][connect-protocol].
 
 The service emulates the DOCTOR script written for Joseph Weizenbaum's 1966
