@@ -4,9 +4,9 @@ connect-demo
 [![Build](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml)
 [![Report Card](https://goreportcard.com/badge/github.com/bufbuild/connect-demo)](https://goreportcard.com/report/github.com/bufbuild/connect-demo)
 
-`connect-demo` is an example RPC service built with [Connect][docs]. Its API is
-defined by a [Protocol Buffer schema][schema], and the service supports the
-[gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
+`connect-demo` is an example RPC service built with [`connect-go`][connect-go].
+Its API is defined by a [Protocol Buffer schema][schema], and the service
+supports the [gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
 protocols][connect-protocol].
 
 The service emulates the DOCTOR script written for Joseph Weizenbaum's 1966
@@ -24,31 +24,25 @@ The service is running on https://demo.connect.build. To make an RPC with cURL,
 using the Connect protocol:
 
 ```bash
-$ curl --http1.1 --header "Content-Type: application/json" \
+curl --header "Content-Type: application/json" \
     --data '{"sentence": "I feel happy."}' \
     https://demo.connect.build/buf.connect.demo.eliza.v1.ElizaService/Say
-
-{"sentence": "Feeling happy? Tell me more."}
 ```
 
 To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
 
 ```bash
-$ grpcurl \
+grpcurl \
     -d '{"sentence": "I feel happy."}' \
     demo.connect.build:443 \
     buf.connect.demo.eliza.v1.ElizaService/Say
-
-{
-  "sentence": "Feeling happy? Tell me more."
-}
 ```
 
 ## Legal
 
 Offered under the [Apache 2 license][license].
 
-[blog]: https://buf.build/blog/announcing-connect-a-better-grpc
+[blog]: https://buf.build/blog/connect-a-better-grpc
 [connect-go]: https://github.com/bufbuild/connect-go
 [connect-protocol]: https://connect.build/docs/protocol
 [docs]: https://connect.build
