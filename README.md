@@ -24,24 +24,18 @@ The service is running on https://demo.connect.build. To make an RPC with cURL,
 using the Connect protocol:
 
 ```bash
-$ curl --http1.1 --header "Content-Type: application/json" \
+curl --header "Content-Type: application/json" \
     --data '{"sentence": "I feel happy."}' \
     https://demo.connect.build/buf.connect.demo.eliza.v1.ElizaService/Say
-
-{"sentence": "Feeling happy? Tell me more."}
 ```
 
 To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
 
 ```bash
-$ grpcurl \
+grpcurl \
     -d '{"sentence": "I feel happy."}' \
     demo.connect.build:443 \
     buf.connect.demo.eliza.v1.ElizaService/Say
-
-{
-  "sentence": "Feeling happy? Tell me more."
-}
 ```
 
 ## Legal
