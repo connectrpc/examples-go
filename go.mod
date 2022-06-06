@@ -3,11 +3,11 @@ module github.com/bufbuild/connect-demo
 go 1.18
 
 require (
-	github.com/bufbuild/connect-go v0.1.0
+	github.com/bufbuild/connect-go v0.1.1
 	github.com/bufbuild/connect-grpchealth-go v0.1.0
 	github.com/bufbuild/connect-grpcreflect-go v0.1.0
 	github.com/rs/cors v1.8.2
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.2
 	golang.org/x/net v0.0.0-20220531201128-c960675eff93
 	google.golang.org/protobuf v1.28.0
 )
