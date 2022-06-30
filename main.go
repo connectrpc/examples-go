@@ -160,3 +160,20 @@ func main() {
 		log.Fatalf("HTTP shutdown: %v", err) // nolint:gocritic
 	}
 }
+
+func (e *elizaServer) Introduce(
+	ctx context.Context,
+	stream *connect.ClientStream[elizav1.IntroduceRequest],
+) (*connect.Response[elizav1.IntroduceResponse], error) {
+	return connect.NewResponse(&elizav1.IntroduceResponse{
+		Sentence: "not implemented yet",
+	}), nil
+}
+
+func (e *elizaServer) Ask(
+	ctx context.Context,
+	req *connect.Request[elizav1.AskRequest],
+	stream *connect.ServerStream[elizav1.AskResponse],
+) error {
+	return nil
+}
