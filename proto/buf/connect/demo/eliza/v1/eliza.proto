@@ -29,6 +29,13 @@ service ElizaService {
   // Converse is a bi-directional request demo. This method should allow for
   // many requests and many responses.
   rpc Converse(stream ConverseRequest) returns (stream ConverseResponse) {}
+  // Introduce is a client-streaming request demo.  This method allows for many requests and a single response from the
+  // server.  It can be used to specify a series of details about the person and get a single acknowledgement response
+  // from Eliza.
+  rpc Introduce(stream IntroduceRequest) returns (IntroduceResponse) {}
+  // Ask is a server-streaming request demo.  This method allows for a single request and many responses from the server.
+  // It can be used to ask for details about Eliza in a single request and receive a series of details from Eliza.
+  rpc Ask(AskRequest) returns (stream AskResponse) {}
 }
 
 // SayRequest describes the sentence said to the ELIZA program.
@@ -48,5 +55,25 @@ message ConverseRequest {
 
 // ConverseResponse describes the sentence responded by the ELIZA program.
 message ConverseResponse {
+  string sentence = 1;
+}
+
+// IntroduceRequest describes the sentence said to the ELIZA program.
+message IntroduceRequest {
+  string sentence = 1;
+}
+
+// IntroduceResponse describes the sentence responded by the ELIZA program.
+message IntroduceResponse {
+  string sentence = 1;
+}
+
+// AskRequest describes the sentence said to the ELIZA program.
+message AskRequest {
+  string sentence = 1;
+}
+
+// AskResponse describes the sentence responded by the ELIZA program.
+message AskResponse {
   string sentence = 1;
 }
