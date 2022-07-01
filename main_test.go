@@ -94,4 +94,35 @@ func TestElizaServer(t *testing.T) {
 			assert.Equal(t, len(receivedValues), len(sendValues))
 		}
 	})
+	t.Run("introduce_success", func(t *testing.T) {
+		total := 0
+		for _, client := range clients {
+			request := connect.NewRequest(&elizav1.IntroduceRequest{
+				Name: "Ringo",
+			})
+			stream, err := client.Introduce(context.Background(), request)
+			assert.Nil(t, err)
+			for stream.Receive() {
+				total += 1
+			}
+			assert.Nil(t, stream.Err())
+			assert.Nil(t, stream.Close())
+			assert.True(t, total > 0)
+		}
+	})
+	t.Run("introduce_failure", func(t *testing.T) {
+		for _, client := range clients {
+			request := connect.NewRequest(&elizav1.IntroduceRequest{})
+			stream, err := client.Introduce(context.Background(), request)
+			assert.Nil(t, err)
+			for stream.Receive() {
+				t.Fatalf("expected error, shouldn't receive any messages")
+			}
+			assert.Equal(
+				t,
+				connect.CodeOf(stream.Err()),
+				connect.CodeInvalidArgument,
+			)
+		}
+	})
 }

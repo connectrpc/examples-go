@@ -161,19 +161,35 @@ func main() {
 	}
 }
 
-func (e *elizaServer) Monologue(
+func (e *elizaServer) Introduce(
 	ctx context.Context,
-	stream *connect.ClientStream[elizav1.MonologueRequest],
-) (*connect.Response[elizav1.MonologueResponse], error) {
-	return connect.NewResponse(&elizav1.MonologueResponse{
-		Sentence: "not implemented yet",
-	}), nil
-}
-
-func (e *elizaServer) Listen(
-	ctx context.Context,
-	req *connect.Request[elizav1.ListenRequest],
-	stream *connect.ServerStream[elizav1.ListenResponse],
+	req *connect.Request[elizav1.IntroduceRequest],
+	stream *connect.ServerStream[elizav1.IntroduceResponse],
 ) error {
+	name := req.Msg.Name
+	if name == "" {
+		return connect.NewError(connect.CodeInvalidArgument, fmt.Errorf(
+			"name is required",
+		))
+	}
+	intros := eliza.GetIntroResponses(name)
+	for _, resp := range intros {
+		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
+			return err
+		}
+		time.Sleep(500)
+	}
+
+	details := eliza.GetRandomDetails()
+	total := len(details)
+	for i := 0; i < total; i++ {
+		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: details[i]}); err != nil {
+			return err
+		}
+	}
+
+	if err := stream.Send(&elizav1.IntroduceResponse{Sentence: "How are you feeling today?"}); err != nil {
+		return err
+	}
 	return nil
 }

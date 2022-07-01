@@ -47,12 +47,9 @@ type ElizaServiceClient interface {
 	// Converse is a bi-directional request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context) *connect_go.BidiStreamForClient[v1.ConverseRequest, v1.ConverseResponse]
-	// Monologue is a client-streaming request demo.  This method allows for many requests and a single response from the
-	// server.  It can be used to specify a series of details and get a single acknowledgement response from Eliza.
-	Monologue(context.Context) *connect_go.ClientStreamForClient[v1.MonologueRequest, v1.MonologueResponse]
-	// Listen is a server-streaming request demo.  This method allows for a single empty request to get many details
-	// about Eliza.
-	Listen(context.Context, *connect_go.Request[v1.ListenRequest]) (*connect_go.ServerStreamForClient[v1.ListenResponse], error)
+	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
+	// of responses
+	Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest]) (*connect_go.ServerStreamForClient[v1.IntroduceResponse], error)
 }
 
 // NewElizaServiceClient constructs a client for the buf.connect.demo.eliza.v1.ElizaService service.
@@ -75,14 +72,9 @@ func NewElizaServiceClient(httpClient connect_go.HTTPClient, baseURL string, opt
 			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Converse",
 			opts...,
 		),
-		monologue: connect_go.NewClient[v1.MonologueRequest, v1.MonologueResponse](
+		introduce: connect_go.NewClient[v1.IntroduceRequest, v1.IntroduceResponse](
 			httpClient,
-			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Monologue",
-			opts...,
-		),
-		listen: connect_go.NewClient[v1.ListenRequest, v1.ListenResponse](
-			httpClient,
-			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Listen",
+			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
 			opts...,
 		),
 	}
@@ -92,8 +84,7 @@ func NewElizaServiceClient(httpClient connect_go.HTTPClient, baseURL string, opt
 type elizaServiceClient struct {
 	say       *connect_go.Client[v1.SayRequest, v1.SayResponse]
 	converse  *connect_go.Client[v1.ConverseRequest, v1.ConverseResponse]
-	monologue *connect_go.Client[v1.MonologueRequest, v1.MonologueResponse]
-	listen    *connect_go.Client[v1.ListenRequest, v1.ListenResponse]
+	introduce *connect_go.Client[v1.IntroduceRequest, v1.IntroduceResponse]
 }
 
 // Say calls buf.connect.demo.eliza.v1.ElizaService.Say.
@@ -106,14 +97,9 @@ func (c *elizaServiceClient) Converse(ctx context.Context) *connect_go.BidiStrea
 	return c.converse.CallBidiStream(ctx)
 }
 
-// Monologue calls buf.connect.demo.eliza.v1.ElizaService.Monologue.
-func (c *elizaServiceClient) Monologue(ctx context.Context) *connect_go.ClientStreamForClient[v1.MonologueRequest, v1.MonologueResponse] {
-	return c.monologue.CallClientStream(ctx)
-}
-
-// Listen calls buf.connect.demo.eliza.v1.ElizaService.Listen.
-func (c *elizaServiceClient) Listen(ctx context.Context, req *connect_go.Request[v1.ListenRequest]) (*connect_go.ServerStreamForClient[v1.ListenResponse], error) {
-	return c.listen.CallServerStream(ctx, req)
+// Introduce calls buf.connect.demo.eliza.v1.ElizaService.Introduce.
+func (c *elizaServiceClient) Introduce(ctx context.Context, req *connect_go.Request[v1.IntroduceRequest]) (*connect_go.ServerStreamForClient[v1.IntroduceResponse], error) {
+	return c.introduce.CallServerStream(ctx, req)
 }
 
 // ElizaServiceHandler is an implementation of the buf.connect.demo.eliza.v1.ElizaService service.
@@ -124,12 +110,9 @@ type ElizaServiceHandler interface {
 	// Converse is a bi-directional request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context, *connect_go.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error
-	// Monologue is a client-streaming request demo.  This method allows for many requests and a single response from the
-	// server.  It can be used to specify a series of details and get a single acknowledgement response from Eliza.
-	Monologue(context.Context, *connect_go.ClientStream[v1.MonologueRequest]) (*connect_go.Response[v1.MonologueResponse], error)
-	// Listen is a server-streaming request demo.  This method allows for a single empty request to get many details
-	// about Eliza.
-	Listen(context.Context, *connect_go.Request[v1.ListenRequest], *connect_go.ServerStream[v1.ListenResponse]) error
+	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
+	// of responses
+	Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest], *connect_go.ServerStream[v1.IntroduceResponse]) error
 }
 
 // NewElizaServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -149,14 +132,9 @@ func NewElizaServiceHandler(svc ElizaServiceHandler, opts ...connect_go.HandlerO
 		svc.Converse,
 		opts...,
 	))
-	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Monologue", connect_go.NewClientStreamHandler(
-		"/buf.connect.demo.eliza.v1.ElizaService/Monologue",
-		svc.Monologue,
-		opts...,
-	))
-	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Listen", connect_go.NewServerStreamHandler(
-		"/buf.connect.demo.eliza.v1.ElizaService/Listen",
-		svc.Listen,
+	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Introduce", connect_go.NewServerStreamHandler(
+		"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
+		svc.Introduce,
 		opts...,
 	))
 	return "/buf.connect.demo.eliza.v1.ElizaService/", mux
@@ -173,10 +151,6 @@ func (UnimplementedElizaServiceHandler) Converse(context.Context, *connect_go.Bi
 	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Converse is not implemented"))
 }
 
-func (UnimplementedElizaServiceHandler) Monologue(context.Context, *connect_go.ClientStream[v1.MonologueRequest]) (*connect_go.Response[v1.MonologueResponse], error) {
-	return nil, connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Monologue is not implemented"))
-}
-
-func (UnimplementedElizaServiceHandler) Listen(context.Context, *connect_go.Request[v1.ListenRequest], *connect_go.ServerStream[v1.ListenResponse]) error {
-	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Listen is not implemented"))
+func (UnimplementedElizaServiceHandler) Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest], *connect_go.ServerStream[v1.IntroduceResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Introduce is not implemented"))
 }

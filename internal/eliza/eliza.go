@@ -25,6 +25,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 )
 
 // Reply responds to a statement as a pyschotherapist might.
@@ -34,6 +35,31 @@ func Reply(input string) (string, bool) {
 		return randomElementFrom(goodbyeResponses), true
 	}
 	return lookupResponse(input), false
+}
+
+// GetIntroResponses returns a collection of introductory responses tailored to the given name
+func GetIntroResponses(name string) []string {
+	intros := []string{}
+	for _, n := range introResponses {
+		intros = append(intros, fmt.Sprintf(n, name))
+	}
+	return intros
+}
+
+// GetRandomDetails returns a random amount of details about ELIZA
+func GetRandomDetails() []string {
+	details := elizaDetails
+	total := len(details)
+
+	responses := getRandomIntInRange(1, total)
+	rand.Shuffle(total, func(i, j int) { details[i], details[j] = details[j], details[i] })
+
+	return details[0:responses]
+}
+
+func getRandomIntInRange(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
 }
 
 func lookupResponse(input string) string {
