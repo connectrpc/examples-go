@@ -161,19 +161,19 @@ func main() {
 	}
 }
 
-func (e *elizaServer) Introduce(
+func (e *elizaServer) Monologue(
 	ctx context.Context,
-	stream *connect.ClientStream[elizav1.IntroduceRequest],
-) (*connect.Response[elizav1.IntroduceResponse], error) {
-	return connect.NewResponse(&elizav1.IntroduceResponse{
+	stream *connect.ClientStream[elizav1.MonologueRequest],
+) (*connect.Response[elizav1.MonologueResponse], error) {
+	return connect.NewResponse(&elizav1.MonologueResponse{
 		Sentence: "not implemented yet",
 	}), nil
 }
 
-func (e *elizaServer) Ask(
+func (e *elizaServer) Listen(
 	ctx context.Context,
-	req *connect.Request[elizav1.AskRequest],
-	stream *connect.ServerStream[elizav1.AskResponse],
+	req *connect.Request[elizav1.ListenRequest],
+	stream *connect.ServerStream[elizav1.ListenResponse],
 ) error {
 	return nil
 }
