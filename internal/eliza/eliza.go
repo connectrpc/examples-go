@@ -37,7 +37,7 @@ func Reply(input string) (string, bool) {
 	return lookupResponse(input), false
 }
 
-// GetIntroResponses returns a collection of introductory responses tailored to the given name
+// GetIntroResponses returns a collection of introductory responses tailored to the given name.
 func GetIntroResponses(name string) []string {
 	intros := []string{}
 	for _, n := range introResponses {
@@ -46,7 +46,7 @@ func GetIntroResponses(name string) []string {
 	return intros
 }
 
-// GetRandomDetails returns a random amount of details about ELIZA
+// GetRandomDetails returns a random amount of details about Eliza.
 func GetRandomDetails() []string {
 	details := elizaDetails
 	total := len(details)
@@ -59,7 +59,7 @@ func GetRandomDetails() []string {
 
 func getRandomIntInRange(min int, max int) int {
 	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min
+	return rand.Intn(max-min) + min // nolint: gosec
 }
 
 func lookupResponse(input string) string {

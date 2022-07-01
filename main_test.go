@@ -94,7 +94,7 @@ func TestElizaServer(t *testing.T) {
 			assert.Equal(t, len(receivedValues), len(sendValues))
 		}
 	})
-	t.Run("introduce_success", func(t *testing.T) {
+	t.Run("introduce_success", func(t *testing.T) { // nolint: paralleltest
 		total := 0
 		for _, client := range clients {
 			request := connect.NewRequest(&elizav1.IntroduceRequest{
@@ -103,14 +103,14 @@ func TestElizaServer(t *testing.T) {
 			stream, err := client.Introduce(context.Background(), request)
 			assert.Nil(t, err)
 			for stream.Receive() {
-				total += 1
+				total++
 			}
 			assert.Nil(t, stream.Err())
 			assert.Nil(t, stream.Close())
 			assert.True(t, total > 0)
 		}
 	})
-	t.Run("introduce_failure", func(t *testing.T) {
+	t.Run("introduce_failure", func(t *testing.T) { // nolint: paralleltest
 		for _, client := range clients {
 			request := connect.NewRequest(&elizav1.IntroduceRequest{})
 			stream, err := client.Introduce(context.Background(), request)
