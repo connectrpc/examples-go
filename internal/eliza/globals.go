@@ -291,20 +291,20 @@ var reflectedWords = map[string]string{
 }
 
 var introResponses = []string{
-	"Hi %s.  I'm Eliza.",
-	"Before we begin, %s, let me tell you a few details about myself.",
+	"Hi %s. I'm Eliza.",
+	"Before we begin, %s, let me tell you something about myself.",
 }
 
 // A string array of facts about ELIZA.  Used in responses to Listen, which is a server-stream.
-var elizaDetails = []string{
-	"I was created by Joseph Weizenbaum",
-	"I was created in the 1960s",
-	"I am a Rogerian psychotherapist",
-	"I am named after Eliza Doolittle from the play Pygmalion",
-	"I was originally written on an IBM 7094",
-	"I can be accessed in most Emacs implementations with the command M-x doctor",
-	"I was created at the MIT Artificial Intelligence Laboratory",
-	"I was one of the first programs capable of attempting the Turing test",
-	"I was designed as a method to show the superficiality of communication between man and machine",
-	"This demo showcasing my talents was written in connect-go",
+var elizaFacts = []string{
+	"I was created by Joseph Weizenbaum.",
+	"I was created in the 1960s.",
+	"I am a Rogerian psychotherapist.",
+	"I am named after Eliza Doolittle from the play Pygmalion.",
+	"I was originally written on an IBM 7094.",
+	"I can be accessed in most Emacs implementations with the command M-x doctor.",
+	"I was created at the MIT Artificial Intelligence Laboratory.",
+	"I was one of the first programs capable of attempting the Turing test.",
+	"I was designed as a method to show the superficiality of communication between man and machine.",
+	"This demo showcasing my talents was written in connect-go.",
 }

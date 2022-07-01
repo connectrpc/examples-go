@@ -25,7 +25,6 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
-	"time"
 )
 
 // Reply responds to a statement as a pyschotherapist might.
@@ -43,23 +42,10 @@ func GetIntroResponses(name string) []string {
 	for _, n := range introResponses {
 		intros = append(intros, fmt.Sprintf(n, name))
 	}
+
+	intros = append(intros, randomElementFrom(elizaFacts))
+	intros = append(intros, "How are you feeling today?")
 	return intros
-}
-
-// GetRandomDetails returns a random amount of details about Eliza.
-func GetRandomDetails() []string {
-	details := elizaDetails
-	total := len(details)
-
-	responses := getRandomIntInRange(1, total)
-	rand.Shuffle(total, func(i, j int) { details[i], details[j] = details[j], details[i] })
-
-	return details[0:responses]
-}
-
-func getRandomIntInRange(min int, max int) int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min // nolint: gosec
 }
 
 func lookupResponse(input string) string {
