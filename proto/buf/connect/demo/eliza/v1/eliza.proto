@@ -32,8 +32,8 @@ service ElizaService {
   // Monologue is a client-streaming request demo.  This method allows for many requests and a single response from the
   // server.  It can be used to specify a series of details and get a single acknowledgement response from Eliza.
   rpc Monologue(stream MonologueRequest) returns (MonologueResponse) {}
-  // Listen is a server-streaming request demo.  This method allows for a single request and many responses from the server.
-  // It can be used to ask for details and then receive a series of responses from Eliza.
+  // Listen is a server-streaming request demo.  This method allows for a single empty request to get many details 
+  // about Eliza.
   rpc Listen(ListenRequest) returns (stream ListenResponse) {}
 }
 
@@ -67,10 +67,8 @@ message MonologueResponse {
   string sentence = 1;
 }
 
-// ListenRequest describes the sentence said to the ELIZA program.
-message ListenRequest {
-  string sentence = 1;
-}
+// ListenRequest describes a request for details from the ELIZA program.
+message ListenRequest {}
 
 // ListenResponse describes the sentence responded by the ELIZA program.
 message ListenResponse {

@@ -50,8 +50,8 @@ type ElizaServiceClient interface {
 	// Monologue is a client-streaming request demo.  This method allows for many requests and a single response from the
 	// server.  It can be used to specify a series of details and get a single acknowledgement response from Eliza.
 	Monologue(context.Context) *connect_go.ClientStreamForClient[v1.MonologueRequest, v1.MonologueResponse]
-	// Listen is a server-streaming request demo.  This method allows for a single request and many responses from the server.
-	// It can be used to ask for details and then receive a series of responses from Eliza.
+	// Listen is a server-streaming request demo.  This method allows for a single empty request to get many details
+	// about Eliza.
 	Listen(context.Context, *connect_go.Request[v1.ListenRequest]) (*connect_go.ServerStreamForClient[v1.ListenResponse], error)
 }
 
@@ -127,8 +127,8 @@ type ElizaServiceHandler interface {
 	// Monologue is a client-streaming request demo.  This method allows for many requests and a single response from the
 	// server.  It can be used to specify a series of details and get a single acknowledgement response from Eliza.
 	Monologue(context.Context, *connect_go.ClientStream[v1.MonologueRequest]) (*connect_go.Response[v1.MonologueResponse], error)
-	// Listen is a server-streaming request demo.  This method allows for a single request and many responses from the server.
-	// It can be used to ask for details and then receive a series of responses from Eliza.
+	// Listen is a server-streaming request demo.  This method allows for a single empty request to get many details
+	// about Eliza.
 	Listen(context.Context, *connect_go.Request[v1.ListenRequest], *connect_go.ServerStream[v1.ListenResponse]) error
 }
 
