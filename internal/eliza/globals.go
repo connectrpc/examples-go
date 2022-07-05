@@ -295,7 +295,7 @@ var introResponses = []string{
 	"Before we begin, %s, let me tell you something about myself.",
 }
 
-// A string array of facts about ELIZA.  Used in responses to Listen, which is a server-stream.
+// A string array of facts about ELIZA.  Used in responses to Introduce, which is a server-stream.
 var elizaFacts = []string{
 	"I was created by Joseph Weizenbaum.",
 	"I was created in the 1960s.",
