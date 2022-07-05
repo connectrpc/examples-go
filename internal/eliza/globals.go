@@ -306,5 +306,4 @@ var elizaFacts = []string{
 	"I was created at the MIT Artificial Intelligence Laboratory.",
 	"I was one of the first programs capable of attempting the Turing test.",
 	"I was designed as a method to show the superficiality of communication between man and machine.",
-	"This demo showcasing my talents was written in connect-go.",
 }

@@ -38,7 +38,7 @@ func Reply(input string) (string, bool) {
 
 // GetIntroResponses returns a collection of introductory responses tailored to the given name.
 func GetIntroResponses(name string) []string {
-	intros := []string{}
+	intros := make([]string, 0, len(introResponses)+2)
 	for _, n := range introResponses {
 		intros = append(intros, fmt.Sprintf(n, name))
 	}
