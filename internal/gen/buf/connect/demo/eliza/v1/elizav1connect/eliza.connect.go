@@ -47,6 +47,9 @@ type ElizaServiceClient interface {
 	// Converse is a bi-directional request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context) *connect_go.BidiStreamForClient[v1.ConverseRequest, v1.ConverseResponse]
+	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
+	// of responses
+	Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest]) (*connect_go.ServerStreamForClient[v1.IntroduceResponse], error)
 }
 
 // NewElizaServiceClient constructs a client for the buf.connect.demo.eliza.v1.ElizaService service.
@@ -69,13 +72,19 @@ func NewElizaServiceClient(httpClient connect_go.HTTPClient, baseURL string, opt
 			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Converse",
 			opts...,
 		),
+		introduce: connect_go.NewClient[v1.IntroduceRequest, v1.IntroduceResponse](
+			httpClient,
+			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
+			opts...,
+		),
 	}
 }
 
 // elizaServiceClient implements ElizaServiceClient.
 type elizaServiceClient struct {
-	say      *connect_go.Client[v1.SayRequest, v1.SayResponse]
-	converse *connect_go.Client[v1.ConverseRequest, v1.ConverseResponse]
+	say       *connect_go.Client[v1.SayRequest, v1.SayResponse]
+	converse  *connect_go.Client[v1.ConverseRequest, v1.ConverseResponse]
+	introduce *connect_go.Client[v1.IntroduceRequest, v1.IntroduceResponse]
 }
 
 // Say calls buf.connect.demo.eliza.v1.ElizaService.Say.
@@ -88,6 +97,11 @@ func (c *elizaServiceClient) Converse(ctx context.Context) *connect_go.BidiStrea
 	return c.converse.CallBidiStream(ctx)
 }
 
+// Introduce calls buf.connect.demo.eliza.v1.ElizaService.Introduce.
+func (c *elizaServiceClient) Introduce(ctx context.Context, req *connect_go.Request[v1.IntroduceRequest]) (*connect_go.ServerStreamForClient[v1.IntroduceResponse], error) {
+	return c.introduce.CallServerStream(ctx, req)
+}
+
 // ElizaServiceHandler is an implementation of the buf.connect.demo.eliza.v1.ElizaService service.
 type ElizaServiceHandler interface {
 	// Say is a unary request demo. This method should allow for a one sentence
@@ -96,6 +110,9 @@ type ElizaServiceHandler interface {
 	// Converse is a bi-directional request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context, *connect_go.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error
+	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
+	// of responses
+	Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest], *connect_go.ServerStream[v1.IntroduceResponse]) error
 }
 
 // NewElizaServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -115,6 +132,11 @@ func NewElizaServiceHandler(svc ElizaServiceHandler, opts ...connect_go.HandlerO
 		svc.Converse,
 		opts...,
 	))
+	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Introduce", connect_go.NewServerStreamHandler(
+		"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
+		svc.Introduce,
+		opts...,
+	))
 	return "/buf.connect.demo.eliza.v1.ElizaService/", mux
 }
 
@@ -127,4 +149,8 @@ func (UnimplementedElizaServiceHandler) Say(context.Context, *connect_go.Request
 
 func (UnimplementedElizaServiceHandler) Converse(context.Context, *connect_go.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error {
 	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Converse is not implemented"))
+}
+
+func (UnimplementedElizaServiceHandler) Introduce(context.Context, *connect_go.Request[v1.IntroduceRequest], *connect_go.ServerStream[v1.IntroduceResponse]) error {
+	return connect_go.NewError(connect_go.CodeUnimplemented, errors.New("buf.connect.demo.eliza.v1.ElizaService.Introduce is not implemented"))
 }

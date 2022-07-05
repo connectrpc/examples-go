@@ -37,7 +37,10 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
-type elizaServer struct{}
+type elizaServer struct {
+	// The time to sleep between sending responses on a stream
+	streamDelay time.Duration
+}
 
 func (e *elizaServer) Say(
 	ctx context.Context,
@@ -159,4 +162,23 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("HTTP shutdown: %v", err) // nolint:gocritic
 	}
+}
+
+func (e *elizaServer) Introduce(
+	ctx context.Context,
+	req *connect.Request[elizav1.IntroduceRequest],
+	stream *connect.ServerStream[elizav1.IntroduceResponse],
+) error {
+	name := req.Msg.Name
+	if name == "" {
+		name = "Anonymous User"
+	}
+	intros := eliza.GetIntroResponses(name)
+	for _, resp := range intros {
+		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
+			return err
+		}
+		time.Sleep(e.streamDelay)
+	}
+	return nil
 }

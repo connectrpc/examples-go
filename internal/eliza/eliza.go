@@ -36,6 +36,18 @@ func Reply(input string) (string, bool) {
 	return lookupResponse(input), false
 }
 
+// GetIntroResponses returns a collection of introductory responses tailored to the given name.
+func GetIntroResponses(name string) []string {
+	intros := make([]string, 0, len(introResponses)+2)
+	for _, n := range introResponses {
+		intros = append(intros, fmt.Sprintf(n, name))
+	}
+
+	intros = append(intros, randomElementFrom(elizaFacts))
+	intros = append(intros, "How are you feeling today?")
+	return intros
+}
+
 func lookupResponse(input string) string {
 	for re, responses := range requestInputRegexToResponseOptions {
 		matches := re.FindStringSubmatch(input)
