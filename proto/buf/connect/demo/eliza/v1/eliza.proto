@@ -26,7 +26,7 @@ service ElizaService {
   // Say is a unary request demo. This method should allow for a one sentence
   // response given a one sentence request.
   rpc Say(SayRequest) returns (SayResponse) {}
-  // Converse is a bi-directional request demo. This method should allow for
+  // Converse is a bi-directional streaming request demo. This method should allow for
   // many requests and many responses.
   rpc Converse(stream ConverseRequest) returns (stream ConverseResponse) {}
   // Introduce is a server-streaming request demo.  This method allows for a single request that will return a series

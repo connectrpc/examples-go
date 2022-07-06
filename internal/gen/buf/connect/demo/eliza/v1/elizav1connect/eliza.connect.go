@@ -44,7 +44,7 @@ type ElizaServiceClient interface {
 	// Say is a unary request demo. This method should allow for a one sentence
 	// response given a one sentence request.
 	Say(context.Context, *connect_go.Request[v1.SayRequest]) (*connect_go.Response[v1.SayResponse], error)
-	// Converse is a bi-directional request demo. This method should allow for
+	// Converse is a bi-directional streaming request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context) *connect_go.BidiStreamForClient[v1.ConverseRequest, v1.ConverseResponse]
 	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
@@ -107,7 +107,7 @@ type ElizaServiceHandler interface {
 	// Say is a unary request demo. This method should allow for a one sentence
 	// response given a one sentence request.
 	Say(context.Context, *connect_go.Request[v1.SayRequest]) (*connect_go.Response[v1.SayResponse], error)
-	// Converse is a bi-directional request demo. This method should allow for
+	// Converse is a bi-directional streaming request demo. This method should allow for
 	// many requests and many responses.
 	Converse(context.Context, *connect_go.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error
 	// Introduce is a server-streaming request demo.  This method allows for a single request that will return a series
