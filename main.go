@@ -48,6 +48,8 @@ type elizaServer struct {
 // sent on a stream by the given duration.
 func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandler {
 	if streamDelay == 0 {
+		// NewTicker cannot be used with a zero value.  Therefore to keep the server-streaming code simple, we just
+		// convert any zero value to 1ns.
 		streamDelay = 1 * time.Nanosecond
 	}
 	return &elizaServer{
