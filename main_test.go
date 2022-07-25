@@ -35,7 +35,7 @@ func TestElizaServer(t *testing.T) {
 	t.Parallel()
 	mux := http.NewServeMux()
 	mux.Handle(elizav1connect.NewElizaServiceHandler(
-		&elizaServer{},
+		NewElizaServer(0),
 	))
 	server := httptest.NewUnstartedServer(mux)
 	server.EnableHTTP2 = true

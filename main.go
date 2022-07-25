@@ -33,13 +33,26 @@ import (
 	grpchealth "github.com/bufbuild/connect-grpchealth-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
 	"github.com/rs/cors"
+	"github.com/spf13/pflag"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+	"golang.org/x/sync/errgroup"
 )
 
 type elizaServer struct {
 	// The time to sleep between sending responses on a stream
 	streamDelay time.Duration
+}
+
+// NewElizaServer returns a new elizaServer.  streamDelay applies to server-streaming and will delay the responses
+// sent on a stream by the given duration.
+func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandler {
+	if streamDelay == 0 {
+		streamDelay = 1 * time.Nanosecond
+	}
+	return &elizaServer{
+		streamDelay: streamDelay,
+	}
 }
 
 func (e *elizaServer) Say(
@@ -111,6 +124,25 @@ func newCORS() *cors.Cors {
 }
 
 func main() {
+	helpArg := pflag.BoolP("help", "h", false, "")
+	streamDelayArg := pflag.DurationP(
+		"server-stream-delay",
+		"d",
+		0,
+		"The duration to delay sending responses on the server stream.",
+	)
+	pflag.Parse()
+
+	if *helpArg {
+		pflag.PrintDefaults()
+		return
+	}
+
+	if *streamDelayArg < 0 {
+		log.Printf("Server stream delay cannot be negative.")
+		return
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle(
 		"/",
@@ -118,7 +150,7 @@ func main() {
 	)
 	compress1KB := connect.WithCompressMinBytes(1024)
 	mux.Handle(elizav1connect.NewElizaServiceHandler(
-		&elizaServer{},
+		NewElizaServer(*streamDelayArg),
 		compress1KB,
 	))
 	mux.Handle(grpchealth.NewHandler(
@@ -173,12 +205,26 @@ func (e *elizaServer) Introduce(
 	if name == "" {
 		name = "Anonymous User"
 	}
-	intros := eliza.GetIntroResponses(name)
-	for _, resp := range intros {
-		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
-			return err
+	grp := new(errgroup.Group)
+	grp.Go(func() error {
+		var resp string
+		intros := eliza.GetIntroResponses(name)
+		ticker := time.NewTicker(e.streamDelay)
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-ticker.C:
+				if len(intros) == 0 {
+					return nil
+				}
+				resp, intros = intros[0], intros[1:]
+				if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
+					return err
+				}
+			}
 		}
-		time.Sleep(e.streamDelay)
-	}
-	return nil
+	})
+
+	return grp.Wait()
 }
