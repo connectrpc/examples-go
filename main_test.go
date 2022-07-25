@@ -75,7 +75,7 @@ func TestElizaServer(t *testing.T) {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
 					require.Nil(t, err, fmt.Sprintf(`failed for string sentence: "%s"`, sentence))
 				}
-				require.Nil(t, stream.CloseSend())
+				require.Nil(t, stream.CloseRequest())
 			}()
 			go func() {
 				defer wg.Done()
@@ -88,7 +88,7 @@ func TestElizaServer(t *testing.T) {
 					assert.True(t, len(msg.Sentence) > 0)
 					receivedValues = append(receivedValues, msg.Sentence)
 				}
-				require.Nil(t, stream.CloseReceive())
+				require.Nil(t, stream.CloseResponse())
 			}()
 			wg.Wait()
 			assert.Equal(t, len(receivedValues), len(sendValues))
