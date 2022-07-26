@@ -36,7 +36,6 @@ import (
 	"github.com/spf13/pflag"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-	"golang.org/x/sync/errgroup"
 )
 
 type elizaServer struct {
@@ -47,11 +46,6 @@ type elizaServer struct {
 // NewElizaServer returns a new elizaServer.  streamDelay applies to server-streaming and will delay the responses
 // sent on a stream by the given duration.
 func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandler {
-	if streamDelay == 0 {
-		// NewTicker cannot be used with a zero value.  Therefore to keep the server-streaming code simple, we just
-		// convert any zero value to 1ns.
-		streamDelay = 1 * time.Nanosecond
-	}
 	return &elizaServer{
 		streamDelay: streamDelay,
 	}
@@ -207,26 +201,23 @@ func (e *elizaServer) Introduce(
 	if name == "" {
 		name = "Anonymous User"
 	}
-	grp := new(errgroup.Group)
-	grp.Go(func() error {
-		var resp string
-		intros := eliza.GetIntroResponses(name)
-		ticker := time.NewTicker(e.streamDelay)
-		for {
+	intros := eliza.GetIntroResponses(name)
+	var ticker *time.Ticker
+	if e.streamDelay > 0 {
+		ticker = time.NewTicker(e.streamDelay)
+		defer ticker.Stop()
+	}
+	for _, resp := range intros {
+		if ticker != nil {
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
 			case <-ticker.C:
-				if len(intros) == 0 {
-					return nil
-				}
-				resp, intros = intros[0], intros[1:]
-				if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
-					return err
-				}
 			}
 		}
-	})
-
-	return grp.Wait()
+		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
