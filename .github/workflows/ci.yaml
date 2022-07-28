@@ -1,7 +1,13 @@
 name: ci
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - main
+  pull_request:
+    types: 
+      - opened
+      - synchronize
+      - reopened
 env:
   MAKEFLAGS: "-j 8"
   PRIVATE_REGISTRY_HOST: us.gcr.io
