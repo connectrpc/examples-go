@@ -12,4 +12,4 @@ RUN go build -o connect-demo .
 FROM alpine
 RUN apk add --update --no-cache ca-certificates tzdata && rm -rf /var/cache/apk/*
 COPY --from=builder /workspace/connect-demo /usr/local/bin/connect-demo
-CMD [ "/usr/local/bin/connect-demo --server-stream-delay=500ms" ]
+CMD [ "/usr/local/bin/connect-demo", "--server-stream-delay=500ms" ]
