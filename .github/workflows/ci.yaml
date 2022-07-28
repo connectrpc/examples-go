@@ -4,7 +4,7 @@ on:
     branches:
       - main
   pull_request:
-    types: 
+    types:
       - opened
       - synchronize
       - reopened
@@ -12,7 +12,7 @@ env:
   MAKEFLAGS: "-j 8"
   PRIVATE_REGISTRY_HOST: us.gcr.io
   PRIVATE_REGISTRY_URL: us.gcr.io/buf-private-gcr-1
-permission:
+permissions:
   contents: read
 jobs:
   testlint:
