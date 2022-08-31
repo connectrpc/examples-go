@@ -62,4 +62,5 @@ jobs:
             ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
+      - name: Update Cloud Run
         run: gcloud run deploy connect-demo-cloud-run --image=${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
