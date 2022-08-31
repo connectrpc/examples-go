@@ -8,10 +8,11 @@ on:
       - opened
       - synchronize
       - reopened
+  workflow_dispatch:
 env:
   MAKEFLAGS: "-j 8"
-  PRIVATE_REGISTRY_HOST: us.gcr.io
-  PRIVATE_REGISTRY_URL: us.gcr.io/buf-private-gcr-1
+  PRIVATE_REGISTRY_HOST: us-central1-docker.pkg.dev
+  PRIVATE_REGISTRY_URL: us-central1-docker.pkg.dev/buf-connect-demo-1/buf-connect-demo-1-connect-demo-registry
 permissions:
   contents: read
 jobs:
@@ -29,19 +30,28 @@ jobs:
       - name: make-lint
         run: make lint
   docker-build-push-connect-demo:
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     needs:
       - testlint
     steps:
-      - name: setup-docker-buildx
-        uses: docker/setup-buildx-action@v2
+      - name: checkout
+        uses: actions/checkout@v3
+      - id: auth
+        name: auth-to-gcp
+        uses: google-github-actions/auth@v0
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: projects/739284710670/locations/global/workloadIdentityPools/connect-demo-ar-wif-pool/providers/connect-demo-ar-wif-provider
+          service_account: ar-writer-service-account@buf-connect-demo-1.iam.gserviceaccount.com
       - name: login-gcr
         uses: docker/login-action@v2
         with:
           registry: ${{ env.PRIVATE_REGISTRY_HOST }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.PRIVATE_DOCKER_TOKEN }}
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+      - name: setup-docker-buildx
+        uses: docker/setup-buildx-action@v2
       - name: build-push
         uses: docker/build-push-action@v3
         with:
@@ -50,3 +60,6 @@ jobs:
           tags: |
             ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:latest
             ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        run: gcloud run deploy connect-demo-cloud-run --image=${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
