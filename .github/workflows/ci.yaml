@@ -8,6 +8,7 @@ on:
       - opened
       - synchronize
       - reopened
+  workflow_dispatch:
 env:
   MAKEFLAGS: "-j 8"
   PRIVATE_REGISTRY_HOST: us-central1-docker.pkg.dev
