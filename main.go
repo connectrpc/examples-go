@@ -116,6 +116,7 @@ func newCORS() *cors.Cors {
 			"Grpc-Status",
 			"Grpc-Status-Details-Bin",
 		},
+		MaxAge: int(2 * time.Hour / time.Second), // FF caps at 24h, modern Chrome at 2h
 	})
 }
 
