@@ -116,7 +116,11 @@ func newCORS() *cors.Cors {
 			"Grpc-Status",
 			"Grpc-Status-Details-Bin",
 		},
-		MaxAge: int(2 * time.Hour / time.Second), // FF caps at 24h, modern Chrome at 2h
+		// Let browsers cache CORS information for longer, which reduces the number
+		// of preflight requests. Any changes to ExposedHeaders won't take effect
+		// until the cached data expires. FF caps this value at 24h, and modern
+		// Chrome caps it at 2h.
+		MaxAge: int(2 * time.Hour / time.Second),
 	})
 }
 
