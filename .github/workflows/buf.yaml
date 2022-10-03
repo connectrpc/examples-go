@@ -24,7 +24,7 @@ jobs:
       - uses: bufbuild/buf-setup-action@v1
         with:
           version: 1.6.0
-      - uses: bufbuild/buf-breaking-action@v1.1.0
+      - uses: bufbuild/buf-breaking-action@v1.1.1
         with:
           against: 'https://github.com/bufbuild/connect-demo.git#branch=main'
   push:
