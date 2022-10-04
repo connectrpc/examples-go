@@ -17,7 +17,7 @@
 // Weizenbaum's 1966 ELIZA natural language processing system.
 package eliza
 
-// Copied from from https://github.com/mattshiel/eliza-go and modified.
+// Copied from https://github.com/mattshiel/eliza-go and modified.
 //
 // See https://github.com/mattshiel/eliza-go/blob/master/LICENSE.
 
@@ -85,5 +85,5 @@ func reflect(fragment string) string {
 }
 
 func randomElementFrom(list []string) string {
-	return list[rand.Intn(len(list))] // nolint:gosec
+	return list[rand.Intn(len(list))] //nolint:gosec
 }
