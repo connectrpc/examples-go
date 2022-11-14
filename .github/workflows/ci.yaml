@@ -62,6 +62,6 @@ jobs:
             ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:latest
             ${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v1
       - name: Update Cloud Run
         run: gcloud run services update connect-demo-cloud-run --image=${{ env.PRIVATE_REGISTRY_URL }}/connect-demo:${{ github.sha }} --region us-central1
