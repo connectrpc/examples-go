@@ -8,7 +8,7 @@ require (
 	github.com/bufbuild/connect-grpcreflect-go v1.0.0
 	github.com/rs/cors v1.8.2
 	github.com/spf13/pflag v1.0.5
-	github.com/stretchr/testify v1.8.0
+	github.com/stretchr/testify v1.8.1
 	golang.org/x/net v0.0.0-20221004154528-8021a29435af
 	google.golang.org/protobuf v1.28.1
 )
