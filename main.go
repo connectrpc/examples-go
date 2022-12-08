@@ -109,6 +109,7 @@ func newCORS() *cors.Cors {
 			"Accept-Post",
 			"Connect-Accept-Encoding",
 			"Connect-Content-Encoding",
+			"Connect-Protocol-Version",
 			"Content-Encoding",
 			"Grpc-Accept-Encoding",
 			"Grpc-Encoding",
