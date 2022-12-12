@@ -1,5 +1,5 @@
-github.com/bufbuild/connect-go v1.3.1 h1:doJP6Q8Ypg6haUT2IAZJPWHUN9rAUp+F9MfK7yhu1zs=
-github.com/bufbuild/connect-go v1.3.1/go.mod h1:9iNvh/NOsfhNBUH5CtvXeVUskQO1xsrEviH7ZArwZ3I=
+github.com/bufbuild/connect-go v1.4.0 h1:N94D0tGxuM2cSI7hM/aL8mtxL6+8rtHuFcIj9oGRp5s=
+github.com/bufbuild/connect-go v1.4.0/go.mod h1:9iNvh/NOsfhNBUH5CtvXeVUskQO1xsrEviH7ZArwZ3I=
 github.com/bufbuild/connect-grpchealth-go v1.0.0 h1:33v883tL86jLomQT6R2ZYVYaI2cRkuUXvU30WfbQ/ko=
 github.com/bufbuild/connect-grpchealth-go v1.0.0/go.mod h1:6OEb4J3rh5+Wdvt4/muOIfZo1lt9cPU8ggwpsjBaZ3Y=
 github.com/bufbuild/connect-grpcreflect-go v1.0.0 h1:zWsLFYqrT1O2sNJFYfTXI5WxbAyiY2dvevvnJHPtV5A=
