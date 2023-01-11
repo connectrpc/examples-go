@@ -11,6 +11,8 @@ therapy is not very convincing.
 For more on Connect, see the [announcement blog post][blog], the documentation
 on [connect.build][docs], or the [`connect-go`][connect-go] repo.
 
+The source files for this module are available at https://github.com/bufbuild/connect-demo/tree/main/proto.
+
 [blog]: https://buf.build/blog/connect-a-better-grpc
 [connect-go]: https://github.com/bufbuild/connect-go
 [docs]: https://connect.build
