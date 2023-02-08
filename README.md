@@ -20,9 +20,13 @@ on [connect.build][docs], or the [`connect-go`][connect-go] repo.
 
 ## Example
 
-The service is running on https://demo.connect.build. To make an RPC with cURL,
-using the Connect protocol:
+The service is running on https://demo.connect.build. Call with `buf curl`:
+```bash
+buf curl --data '{"sentence": "I feel happy."}' \
+    https://demo.connect.build/buf.connect.demo.eliza.v1.ElizaService/Say
+```
 
+To make an RPC with cURL, using the Connect protocol:
 ```bash
 curl --header "Content-Type: application/json" \
     --data '{"sentence": "I feel happy."}' \
