@@ -3,7 +3,7 @@ module github.com/bufbuild/connect-demo
 go 1.18
 
 require (
-	github.com/bufbuild/connect-go v1.4.1
+	github.com/bufbuild/connect-go v1.6.0
 	github.com/bufbuild/connect-grpchealth-go v1.0.0
 	github.com/bufbuild/connect-grpcreflect-go v1.0.0
 	github.com/rs/cors v1.8.3
