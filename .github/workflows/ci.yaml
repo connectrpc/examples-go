@@ -54,7 +54,7 @@ jobs:
       - name: setup-docker-buildx
         uses: docker/setup-buildx-action@v2
       - name: build-push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           file: Dockerfile
           push: true
