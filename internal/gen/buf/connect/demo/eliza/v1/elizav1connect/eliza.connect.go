@@ -39,6 +39,22 @@ const (
 	ElizaServiceName = "buf.connect.demo.eliza.v1.ElizaService"
 )
 
+// These constants are the fully-qualified names of the RPCs defined in this package. They're
+// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
+//
+// Note that these are different from the fully-qualified method names used by
+// google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
+// reflection-formatted method names, remove the leading slash and convert the remaining slash to a
+// period.
+const (
+	// ElizaServiceSayProcedure is the fully-qualified name of the ElizaService's Say RPC.
+	ElizaServiceSayProcedure = "/buf.connect.demo.eliza.v1.ElizaService/Say"
+	// ElizaServiceConverseProcedure is the fully-qualified name of the ElizaService's Converse RPC.
+	ElizaServiceConverseProcedure = "/buf.connect.demo.eliza.v1.ElizaService/Converse"
+	// ElizaServiceIntroduceProcedure is the fully-qualified name of the ElizaService's Introduce RPC.
+	ElizaServiceIntroduceProcedure = "/buf.connect.demo.eliza.v1.ElizaService/Introduce"
+)
+
 // ElizaServiceClient is a client for the buf.connect.demo.eliza.v1.ElizaService service.
 type ElizaServiceClient interface {
 	// Say is a unary request demo. This method should allow for a one sentence
@@ -64,17 +80,17 @@ func NewElizaServiceClient(httpClient connect_go.HTTPClient, baseURL string, opt
 	return &elizaServiceClient{
 		say: connect_go.NewClient[v1.SayRequest, v1.SayResponse](
 			httpClient,
-			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Say",
+			baseURL+ElizaServiceSayProcedure,
 			opts...,
 		),
 		converse: connect_go.NewClient[v1.ConverseRequest, v1.ConverseResponse](
 			httpClient,
-			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Converse",
+			baseURL+ElizaServiceConverseProcedure,
 			opts...,
 		),
 		introduce: connect_go.NewClient[v1.IntroduceRequest, v1.IntroduceResponse](
 			httpClient,
-			baseURL+"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
+			baseURL+ElizaServiceIntroduceProcedure,
 			opts...,
 		),
 	}
@@ -121,23 +137,33 @@ type ElizaServiceHandler interface {
 // By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
 // and JSON codecs. They also support gzip compression.
 func NewElizaServiceHandler(svc ElizaServiceHandler, opts ...connect_go.HandlerOption) (string, http.Handler) {
-	mux := http.NewServeMux()
-	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Say", connect_go.NewUnaryHandler(
-		"/buf.connect.demo.eliza.v1.ElizaService/Say",
+	elizaServiceSayHandler := connect_go.NewUnaryHandler(
+		ElizaServiceSayProcedure,
 		svc.Say,
 		opts...,
-	))
-	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Converse", connect_go.NewBidiStreamHandler(
-		"/buf.connect.demo.eliza.v1.ElizaService/Converse",
+	)
+	elizaServiceConverseHandler := connect_go.NewBidiStreamHandler(
+		ElizaServiceConverseProcedure,
 		svc.Converse,
 		opts...,
-	))
-	mux.Handle("/buf.connect.demo.eliza.v1.ElizaService/Introduce", connect_go.NewServerStreamHandler(
-		"/buf.connect.demo.eliza.v1.ElizaService/Introduce",
+	)
+	elizaServiceIntroduceHandler := connect_go.NewServerStreamHandler(
+		ElizaServiceIntroduceProcedure,
 		svc.Introduce,
 		opts...,
-	))
-	return "/buf.connect.demo.eliza.v1.ElizaService/", mux
+	)
+	return "/buf.connect.demo.eliza.v1.ElizaService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case ElizaServiceSayProcedure:
+			elizaServiceSayHandler.ServeHTTP(w, r)
+		case ElizaServiceConverseProcedure:
+			elizaServiceConverseHandler.ServeHTTP(w, r)
+		case ElizaServiceIntroduceProcedure:
+			elizaServiceIntroduceHandler.ServeHTTP(w, r)
+		default:
+			http.NotFound(w, r)
+		}
+	})
 }
 
 // UnimplementedElizaServiceHandler returns CodeUnimplemented from all methods.

@@ -29,6 +29,7 @@ linters:
   disable:
     - cyclop            # covered by gocyclo
     - deadcode          # abandoned
+    - depguard          # in golangci-lint v1.53.0+ default requires only stdlib deps
     - exhaustivestruct  # replaced by exhaustruct
     - funlen            # rely on code review to limit function length
     - gocognit          # dubious "cognitive overhead" quantification

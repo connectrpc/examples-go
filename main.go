@@ -52,7 +52,7 @@ func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandle
 }
 
 func (e *elizaServer) Say(
-	ctx context.Context,
+	_ context.Context,
 	req *connect.Request[elizav1.SayRequest],
 ) (*connect.Response[elizav1.SayResponse], error) {
 	reply, _ := eliza.Reply(req.Msg.Sentence) // ignore end-of-conversation detection
