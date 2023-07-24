@@ -6,7 +6,7 @@ linters-settings:
   exhaustruct:
     include:
       # No zero values for param structs.
-      - 'github\.com/bufbuild/connect-demo\..*[pP]arams'
+      - 'github\.com/connectrpc/connect-go-examples\..*[pP]arams'
   forbidigo:
     forbid:
       # Unlike most Buf projects, we're allowing the standard library's log

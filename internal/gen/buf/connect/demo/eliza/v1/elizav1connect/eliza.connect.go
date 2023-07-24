@@ -21,8 +21,8 @@ package elizav1connect
 import (
 	context "context"
 	errors "errors"
-	v1 "github.com/bufbuild/connect-demo/internal/gen/buf/connect/demo/eliza/v1"
 	connect_go "github.com/bufbuild/connect-go"
+	v1 "github.com/connectrpc/connect-go-examples/internal/gen/buf/connect/demo/eliza/v1"
 	http "net/http"
 	strings "strings"
 )

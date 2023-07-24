@@ -1,4 +1,4 @@
-module github.com/bufbuild/connect-demo
+module github.com/connectrpc/connect-go-examples
 
 go 1.18
 

@@ -1,10 +1,10 @@
-connect-demo
+connect-go-examples
 ============
 
-[![Build](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml)
-[![Report Card](https://goreportcard.com/badge/github.com/bufbuild/connect-demo)](https://goreportcard.com/report/github.com/bufbuild/connect-demo)
+[![Build](https://github.com/connectrpc/connect-go-examples/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/connectrpc/connect-go-examples/actions/workflows/ci.yaml)
+[![Report Card](https://goreportcard.com/badge/github.com/connectrpc/connect-go-examples)](https://goreportcard.com/report/github.com/connectrpc/connect-go-examples)
 
-`connect-demo` is an example RPC service built with [`connect-go`][connect-go].
+`connect-go-examples` is an example RPC service built with [`connect-go`][connect-go].
 Its API is defined by a [Protocol Buffer schema][schema], and the service
 supports the [gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
 protocols][connect-protocol].
@@ -50,5 +50,5 @@ Offered under the [Apache 2 license][license].
 [grpc-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
 [grpcurl]: https://github.com/fullstorydev/grpcurl
 [grpcweb-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
-[license]: https://github.com/bufbuild/connect-demo/blob/main/LICENSE.txt
-[schema]: https://github.com/bufbuild/connect-demo/blob/main/proto/buf/connect/demo/eliza/v1/eliza.proto
+[license]: https://github.com/connectrpc/connect-go-examples/blob/main/LICENSE.txt
+[schema]: https://github.com/connectrpc/connect-go-examples/blob/main/proto/buf/connect/demo/eliza/v1/eliza.proto

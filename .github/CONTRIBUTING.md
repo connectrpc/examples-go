@@ -1,7 +1,7 @@
 Contributing
 ============
 
-We'd love your help making `connect-demo` better!
+We'd love your help making `connect-go-examples` better!
 
 If you'd like to add new exported APIs, please [open an issue][open-issue]
 describing your proposal &mdash; discussing API changes ahead of time makes
@@ -20,9 +20,9 @@ you to accept the CLA when you open your pull request.
 ```
 mkdir -p $GOPATH/src/github.com/bufbuild
 cd $GOPATH/src/github.com/bufbuild
-git clone git@github.com:your_github_username/connect-demo.git
-cd connect-demo
-git remote add upstream https://github.com/bufbuild/connect-demo.git
+git clone git@github.com:your_github_username/connect-go-examples.git
+cd connect-go-examples
+git remote add upstream https://github.com/connectrpc/connect-go-examples.git
 git fetch upstream
 ```
 
@@ -38,7 +38,7 @@ make
 Start by creating a new branch for your changes:
 
 ```
-cd $GOPATH/src/github.com/bufbuild/connect-demo
+cd $GOPATH/src/github.com/connectrpc/connect-go-examples
 git checkout main
 git fetch upstream
 git rebase upstream/main
@@ -67,7 +67,7 @@ We're much more likely to approve your changes if you:
 * Write a [good commit message][commit-message].
 * Maintain backward compatibility.
 
-[fork]: https://github.com/bufbuild/connect-demo/fork
-[open-issue]: https://github.com/bufbuild/connect-demo/issues/new
-[cla]: https://cla-assistant.io/bufbuild/connect-demo
+[fork]: https://github.com/connectrpc/connect-go-examples/fork
+[open-issue]: https://github.com/connectrpc/connect-go-examples/issues/new
+[cla]: https://cla-assistant.io/connectrpc/connect-go-examples
 [commit-message]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
