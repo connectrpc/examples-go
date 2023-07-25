@@ -26,9 +26,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bufbuild/connect-demo/internal/eliza"
-	elizav1 "github.com/bufbuild/connect-demo/internal/gen/buf/connect/demo/eliza/v1"
-	"github.com/bufbuild/connect-demo/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
 	"github.com/bufbuild/connect-go"
 	grpchealth "github.com/bufbuild/connect-grpchealth-go"
 	grpcreflect "github.com/bufbuild/connect-grpcreflect-go"
@@ -36,6 +33,10 @@ import (
 	"github.com/spf13/pflag"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+
+	"connect-go-examples/internal/eliza"
+	elizav1 "connect-go-examples/internal/gen/buf/connect/demo/eliza/v1"
+	"connect-go-examples/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
 )
 
 type elizaServer struct {

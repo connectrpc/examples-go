@@ -1,4 +1,6 @@
-module github.com/bufbuild/connect-demo
+// NB: This module name is intentionally not "go get"-able or "go install"-able.
+// Users should clone the repo to explore the examples.
+module connect-go-examples
 
 go 1.18
 
