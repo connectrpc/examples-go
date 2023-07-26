@@ -1,5 +1,5 @@
-connect-demo
-============
+examples-go
+===========
 
 [![Build](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml)
 [![Report Card](https://goreportcard.com/badge/github.com/connectrpc/examples-go)](https://goreportcard.com/report/github.com/connectrpc/examples-go)
@@ -44,7 +44,7 @@ Offered under the [Apache 2 license][license].
 
 [blog]: https://buf.build/blog/connect-a-better-grpc
 [connect]: https://github.com/connectrpc/connect-go
-[connect-protocol]: https://connect.build/docs/protocol
+[connect-protocol]: https://connectrpc.com/docs/protocol
 [docs]: https://connectrpc.com
 [eliza]: https://en.wikipedia.org/wiki/ELIZA
 [grpc-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
