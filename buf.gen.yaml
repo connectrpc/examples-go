@@ -2,7 +2,7 @@ version: v1
 managed:
   enabled: true
   go_package_prefix:
-    default: connect-go-examples/internal/gen
+    default: connect-examples-go/internal/gen
 plugins:
   - name: go
     out: internal/gen

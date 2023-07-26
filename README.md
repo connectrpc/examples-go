@@ -1,10 +1,10 @@
 connect-demo
 ============
 
-[![Build](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/bufbuild/connect-demo/actions/workflows/ci.yaml)
-[![Report Card](https://goreportcard.com/badge/github.com/bufbuild/connect-demo)](https://goreportcard.com/report/github.com/bufbuild/connect-demo)
+[![Build](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml)
+[![Report Card](https://goreportcard.com/badge/github.com/connectrpc/examples-go)](https://goreportcard.com/report/github.com/connectrpc/examples-go)
 
-`connect-demo` is an example RPC service built with [`connect-go`][connect-go].
+`examples-go` contains an example RPC service built with [Connect][connect].
 Its API is defined by a [Protocol Buffer schema][schema], and the service
 supports the [gRPC][grpc-protocol], [gRPC-Web][grpcweb-protocol], and [Connect
 protocols][connect-protocol].
@@ -16,17 +16,17 @@ was a demonstration of the superficiality of human-computer communication, the
 therapy is not very convincing.
 
 For more on Connect, see the [announcement blog post][blog], the documentation
-on [connect.build][docs], or the [`connect-go`][connect-go] repo.
+on [connectrpc.com][docs], or the [Connect][connect] repo.
 
 ## Example
 
-The service is running on https://demo.connect.build. To make an RPC with cURL,
+The service is running on https://demo.connectrpc.com. To make an RPC with cURL,
 using the Connect protocol:
 
 ```bash
 curl --header "Content-Type: application/json" \
     --data '{"sentence": "I feel happy."}' \
-    https://demo.connect.build/buf.connect.demo.eliza.v1.ElizaService/Say
+    https://demo.connectrpc.com/buf.connect.demo.eliza.v1.ElizaService/Say
 ```
 
 To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
@@ -34,7 +34,7 @@ To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
 ```bash
 grpcurl \
     -d '{"sentence": "I feel happy."}' \
-    demo.connect.build:443 \
+    demo.connectrpc.com:443 \
     buf.connect.demo.eliza.v1.ElizaService/Say
 ```
 
@@ -43,12 +43,12 @@ grpcurl \
 Offered under the [Apache 2 license][license].
 
 [blog]: https://buf.build/blog/connect-a-better-grpc
-[connect-go]: https://github.com/bufbuild/connect-go
+[connect]: https://github.com/connectrpc/connect-go
 [connect-protocol]: https://connect.build/docs/protocol
-[docs]: https://connect.build
+[docs]: https://connectrpc.com
 [eliza]: https://en.wikipedia.org/wiki/ELIZA
 [grpc-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
 [grpcurl]: https://github.com/fullstorydev/grpcurl
 [grpcweb-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
-[license]: https://github.com/bufbuild/connect-demo/blob/main/LICENSE.txt
-[schema]: https://github.com/bufbuild/connect-demo/blob/main/proto/buf/connect/demo/eliza/v1/eliza.proto
+[license]: https://github.com/connectrpc/examples-go/blob/main/LICENSE.txt
+[schema]: https://github.com/connectrpc/examples-go/blob/main/proto/buf/connect/demo/eliza/v1/eliza.proto

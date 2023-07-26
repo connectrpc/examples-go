@@ -1,7 +1,7 @@
 Contributing
 ============
 
-We'd love your help making `connect-demo` better!
+We'd love your help making `examples-go` better!
 
 If you'd like to add new exported APIs, please [open an issue][open-issue]
 describing your proposal &mdash; discussing API changes ahead of time makes
@@ -9,7 +9,7 @@ pull request review much smoother. In your issue, pull request, and any other
 communications, please remember to treat your fellow contributors with
 respect!
 
-Note that you'll need to sign [Buf's Contributor License Agreement][cla]
+Note that you'll need to sign the [Contributor License Agreement][cla]
 before we can accept any of your contributions. If necessary, a bot will remind
 you to accept the CLA when you open your pull request.
 
@@ -18,11 +18,11 @@ you to accept the CLA when you open your pull request.
 [Fork][fork], then clone the repository:
 
 ```
-mkdir -p $GOPATH/src/github.com/bufbuild
-cd $GOPATH/src/github.com/bufbuild
-git clone git@github.com:your_github_username/connect-demo.git
-cd connect-demo
-git remote add upstream https://github.com/bufbuild/connect-demo.git
+mkdir -p $GOPATH/src/github.com/connectrpc
+cd $GOPATH/src/github.com/connectrpc
+git clone git@github.com:your_github_username/examples-go.git examples-go
+cd examples-go
+git remote add upstream https://github.com/connectrpc/examples-go.git
 git fetch upstream
 ```
 
@@ -38,7 +38,7 @@ make
 Start by creating a new branch for your changes:
 
 ```
-cd $GOPATH/src/github.com/bufbuild/connect-demo
+cd $GOPATH/src/github.com/connectrpc/examples-go
 git checkout main
 git fetch upstream
 git rebase upstream/main
@@ -67,7 +67,7 @@ We're much more likely to approve your changes if you:
 * Write a [good commit message][commit-message].
 * Maintain backward compatibility.
 
-[fork]: https://github.com/bufbuild/connect-demo/fork
-[open-issue]: https://github.com/bufbuild/connect-demo/issues/new
-[cla]: https://cla-assistant.io/bufbuild/connect-demo
+[fork]: https://github.com/connectrpc/examples-go/fork
+[open-issue]: https://github.com/connectrpc/examples-go/issues/new
+[cla]: https://cla-assistant.io/connectrpc/connect-demo
 [commit-message]: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html

@@ -24,12 +24,11 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/bufbuild/connect-go"
+	elizav1 "connect-examples-go/internal/gen/buf/connect/demo/eliza/v1"
+	"connect-examples-go/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
+	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	elizav1 "connect-go-examples/internal/gen/buf/connect/demo/eliza/v1"
-	"connect-go-examples/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
 )
 
 func TestElizaServer(t *testing.T) {
