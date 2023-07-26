@@ -19,7 +19,7 @@ linters-settings:
     sections:
       - standard # Standard section: captures all standard packages.
       - default # Default section: contains all imports that could not be matched to another section type.
-      - prefix(examples-go) # Custom section: groups all imports with the specified Prefix.
+      - prefix(connect-examples-go) # Custom section: groups all imports with the specified Prefix.
   godox:
     # TODO, OPT, etc. comments are fine to commit. Use FIXME comments for
     # temporary hacks, and use godox to prevent committing them.
