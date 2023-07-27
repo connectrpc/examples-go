@@ -25,7 +25,7 @@ using the Connect protocol:
 ```bash
 curl --header "Content-Type: application/json" \
     --data '{"sentence": "I feel happy."}' \
-    https://demo.connectrpc.com/buf.connect.demo.eliza.v1.ElizaService/Say
+    https://demo.connectrpc.com/connectrpc.eliza.v1.ElizaService/Say
 ```
 
 To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
@@ -34,7 +34,7 @@ To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
 grpcurl \
     -d '{"sentence": "I feel happy."}' \
     demo.connectrpc.com:443 \
-    buf.connect.demo.eliza.v1.ElizaService/Say
+    connectrpc.eliza.v1.ElizaService/Say
 ```
 
 ## Legal

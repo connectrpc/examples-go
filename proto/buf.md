@@ -1,4 +1,4 @@
-# Connect Demo Service: Eliza
+# Eliza: A Demonstration Service
 
 Eliza is an example RPC service built with [Connect][connect].
 
@@ -11,9 +11,10 @@ therapy is not very convincing.
 For more on Connect, see the [announcement blog post][blog], the documentation
 on [connectrpc.com][docs], or the [`connect-go`][connect] repo.
 
-The source files for this module are available at https://github.com/connectrpc/examples-go/tree/main/proto.
+The source files for this module are available on [GitHub][proto].
 
 [blog]: https://buf.build/blog/connect-a-better-grpc
 [connect]: https://github.com/connectrpc/connect-go
 [docs]: https://connectrpc.com
+[proto]: https://github.com/connectrpc/examples-go/tree/main/proto
 [eliza]: https://en.wikipedia.org/wiki/ELIZA
