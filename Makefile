@@ -8,7 +8,7 @@ MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-print-directory
 BIN=$(abspath .tmp/bin)
 COPYRIGHT_YEARS := 2022
-LICENSE_IGNORE := -e /testdata/
+LICENSE_IGNORE := --ignore /testdata/
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
 
@@ -50,19 +50,10 @@ lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
 generate: $(BIN)/buf $(BIN)/protoc-gen-go $(BIN)/protoc-gen-connect-go $(BIN)/license-header ## Regenerate code and licenses
 	rm -rf internal/gen
 	PATH=$(BIN) $(BIN)/buf generate
-	@# We want to operate on a list of modified and new files, excluding
-	@# deleted and ignored files. git-ls-files can't do this alone. comm -23 takes
-	@# two files and prints the union, dropping lines common to both (-3) and
-	@# those only in the second file (-2). We make one git-ls-files call for
-	@# the modified, cached, and new (--others) files, and a second for the
-	@# deleted files.
-	comm -23 \
-		<(git ls-files --cached --modified --others --no-empty-directory --exclude-standard | sort -u | grep -v $(LICENSE_IGNORE) ) \
-		<(git ls-files --deleted | sort -u) | \
-		xargs $(BIN)/license-header \
-			--license-type apache \
-			--copyright-holder "Buf Technologies, Inc." \
-			--year-range "$(COPYRIGHT_YEARS)"
+	$(BIN)/license-header \
+		--license-type apache \
+		--copyright-holder "Buf Technologies, Inc." \
+		--year-range "$(COPYRIGHT_YEARS)" $(LICENSE_IGNORE)
 
 .PHONY: upgrade
 upgrade: ## Upgrade dependencies
@@ -75,12 +66,12 @@ checkgenerate:
 
 $(BIN)/buf: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install github.com/bufbuild/buf/cmd/buf@v1.24.0
+	GOBIN=$(abspath $(@D)) $(GO) install github.com/bufbuild/buf/cmd/buf@v1.25.0
 
 $(BIN)/license-header: Makefile
 	@mkdir -p $(@D)
 	GOBIN=$(abspath $(@D)) $(GO) install \
-		  github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.24.0
+		  github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.25.0
 
 $(BIN)/golangci-lint: Makefile
 	@mkdir -p $(@D)
