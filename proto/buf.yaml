@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/connectrpc/examples
+name: buf.build/connectrpc/eliza
 lint:
   use:
     - DEFAULT
