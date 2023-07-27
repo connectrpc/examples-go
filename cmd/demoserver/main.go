@@ -35,21 +35,18 @@ import (
 	"golang.org/x/net/http2/h2c"
 
 	"connect-examples-go/internal/eliza"
-	elizav1 "connect-examples-go/internal/gen/buf/connect/demo/eliza/v1"
-	"connect-examples-go/internal/gen/buf/connect/demo/eliza/v1/elizav1connect"
+	elizav1 "connect-examples-go/internal/gen/connectrpc/eliza/v1"
+	"connect-examples-go/internal/gen/connectrpc/eliza/v1/elizav1connect"
 )
 
 type elizaServer struct {
-	// The time to sleep between sending responses on a stream
-	streamDelay time.Duration
+	streamDelay time.Duration // sleep between streaming response messages
 }
 
-// NewElizaServer returns a new elizaServer.  streamDelay applies to server-streaming and will delay the responses
-// sent on a stream by the given duration.
+// NewElizaServer returns a new Eliza implementation which sleeps for the
+// provided duration between streaming responses.
 func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandler {
-	return &elizaServer{
-		streamDelay: streamDelay,
-	}
+	return &elizaServer{streamDelay: streamDelay}
 }
 
 func (e *elizaServer) Say(
@@ -84,6 +81,36 @@ func (e *elizaServer) Converse(
 			return nil
 		}
 	}
+}
+
+func (e *elizaServer) Introduce(
+	ctx context.Context,
+	req *connect.Request[elizav1.IntroduceRequest],
+	stream *connect.ServerStream[elizav1.IntroduceResponse],
+) error {
+	name := req.Msg.Name
+	if name == "" {
+		name = "Anonymous User"
+	}
+	intros := eliza.GetIntroResponses(name)
+	var ticker *time.Ticker
+	if e.streamDelay > 0 {
+		ticker = time.NewTicker(e.streamDelay)
+		defer ticker.Stop()
+	}
+	for _, resp := range intros {
+		if ticker != nil {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-ticker.C:
+			}
+		}
+		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func newCORS() *cors.Cors {
@@ -196,34 +223,4 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatalf("HTTP shutdown: %v", err) //nolint:gocritic
 	}
-}
-
-func (e *elizaServer) Introduce(
-	ctx context.Context,
-	req *connect.Request[elizav1.IntroduceRequest],
-	stream *connect.ServerStream[elizav1.IntroduceResponse],
-) error {
-	name := req.Msg.Name
-	if name == "" {
-		name = "Anonymous User"
-	}
-	intros := eliza.GetIntroResponses(name)
-	var ticker *time.Ticker
-	if e.streamDelay > 0 {
-		ticker = time.NewTicker(e.streamDelay)
-		defer ticker.Stop()
-	}
-	for _, resp := range intros {
-		if ticker != nil {
-			select {
-			case <-ctx.Done():
-				return ctx.Err()
-			case <-ticker.C:
-			}
-		}
-		if err := stream.Send(&elizav1.IntroduceResponse{Sentence: resp}); err != nil {
-			return err
-		}
-	}
-	return nil
 }

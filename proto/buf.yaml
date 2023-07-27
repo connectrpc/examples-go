@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/bufbuild/eliza
+name: buf.build/connectrpc/eliza
 lint:
   use:
     - DEFAULT
