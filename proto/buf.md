@@ -9,7 +9,7 @@ was a demonstration of the superficiality of human-computer communication, the
 therapy is not very convincing.
 
 For more on Connect, see the [announcement blog post][blog], the documentation
-on [connectrpc.com][docs], or the [`connect-go`][connect] repo.
+on [connectrpc.com][docs], or the [`connectrpc/connect-go`][connect] repository.
 
 The source files for this module are available on [GitHub][proto].
 
