@@ -80,7 +80,7 @@ $(BIN)/golangci-lint: Makefile
 
 $(BIN)/protoc-gen-go: Makefile
 	@mkdir -p $(@D)
-	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@v1.31.0
+	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go
 
 $(BIN)/protoc-gen-connect-go: Makefile go.mod
 	@mkdir -p $(@D)
