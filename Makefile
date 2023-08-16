@@ -7,6 +7,8 @@ MAKEFLAGS += --warn-undefined-variables
 MAKEFLAGS += --no-builtin-rules
 MAKEFLAGS += --no-print-directory
 BIN=$(abspath .tmp/bin)
+export PATH := $(BIN):$(PATH)
+export GOBIN := $(abspath $(BIN))
 COPYRIGHT_YEARS := 2022
 LICENSE_IGNORE := --ignore /testdata/
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
@@ -38,19 +40,19 @@ build: generate ## Build all packages
 lint: $(BIN)/golangci-lint $(BIN)/buf ## Lint Go and protobuf
 	test -z "$$($(BIN)/buf format -d . | tee /dev/stderr)"
 	$(GO) vet ./...
-	$(BIN)/golangci-lint run
-	$(BIN)/buf lint
+	golangci-lint run
+	buf lint
 
 .PHONY: lintfix
 lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
-	$(BIN)/golangci-lint run --fix
-	$(BIN)/buf format -w .
+	golangci-lint run --fix
+	buf format -w .
 
 .PHONY: generate
 generate: $(BIN)/buf $(BIN)/protoc-gen-go $(BIN)/protoc-gen-connect-go $(BIN)/license-header ## Regenerate code and licenses
 	rm -rf internal/gen
 	PATH=$(BIN) $(BIN)/buf generate
-	$(BIN)/license-header \
+	license-header \
 		--license-type apache \
 		--copyright-holder "Buf Technologies, Inc." \
 		--year-range "$(COPYRIGHT_YEARS)" $(LICENSE_IGNORE)
@@ -66,21 +68,20 @@ checkgenerate:
 
 $(BIN)/buf: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install github.com/bufbuild/buf/cmd/buf@v1.25.0
+	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
 
 $(BIN)/license-header: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install \
-		  github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.25.0
+	$(GO) install github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.26.1
 
 $(BIN)/golangci-lint: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
 
 $(BIN)/protoc-gen-go: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@v1.31.0
+	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go
 
 $(BIN)/protoc-gen-connect-go: Makefile go.mod
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install connectrpc.com/connect/cmd/protoc-gen-connect-go
+	$(GO) install connectrpc.com/connect/cmd/protoc-gen-connect-go

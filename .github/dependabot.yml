@@ -13,5 +13,5 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      # Must match generated code, locked in Makefile.
+      # Must match generated code, can't be updated by Dependabot.
       - dependency-name: "google.golang.org/protobuf"
