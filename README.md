@@ -28,6 +28,11 @@ curl --header "Content-Type: application/json" \
     https://demo.connectrpc.com/connectrpc.eliza.v1.ElizaService/Say
 ```
 
+Because the `Say` RPC is idempotent and side effect free, the Connect protocol
+also allows HTTP GETs. This is particularly convenient in web browsers, where
+you can type the request message into the URL bar [like
+this](https://demo.connectrpc.com/connectrpc.eliza.v1.ElizaService/Say?connect=v1&encoding=json&message={"sentence":"I'm confused."}).
+
 To make the same RPC, but using [`grpcurl`][grpcurl] and the gRPC protocol:
 
 ```bash
