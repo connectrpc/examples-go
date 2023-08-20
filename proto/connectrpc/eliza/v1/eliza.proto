@@ -24,7 +24,9 @@ package connectrpc.eliza.v1;
 // distributions.
 service ElizaService {
   // Say is a unary RPC. Eliza responds to the prompt with a single sentence.
-  rpc Say(SayRequest) returns (SayResponse) {}
+  rpc Say(SayRequest) returns (SayResponse) {
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
   // Converse is a bidirectional RPC. The caller may exchange multiple
   // back-and-forth messages with Eliza over a long-lived connection. Eliza
   // responds to each ConverseRequest with a ConverseResponse.
