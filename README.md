@@ -50,4 +50,4 @@ Offered under the [Apache 2 license][license].
 [grpcurl]: https://github.com/fullstorydev/grpcurl
 [grpcweb-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
 [license]: https://github.com/connectrpc/examples-go/blob/main/LICENSE.txt
-[schema]: https://github.com/connectrpc/examples-go/blob/main/proto/buf/connect/demo/eliza/v1/eliza.proto
+[schema]: https://github.com/connectrpc/examples-go/blob/main/proto/connectrpc/eliza/v1/eliza.proto
