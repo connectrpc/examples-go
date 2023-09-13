@@ -9,7 +9,7 @@ MAKEFLAGS += --no-print-directory
 BIN=$(abspath .tmp/bin)
 export PATH := $(BIN):$(PATH)
 export GOBIN := $(abspath $(BIN))
-COPYRIGHT_YEARS := 2022
+COPYRIGHT_YEARS := 2022-2023
 LICENSE_IGNORE := --ignore /testdata/
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
@@ -54,7 +54,7 @@ generate: $(BIN)/buf $(BIN)/protoc-gen-go $(BIN)/protoc-gen-connect-go $(BIN)/li
 	PATH=$(BIN) $(BIN)/buf generate
 	license-header \
 		--license-type apache \
-		--copyright-holder "Buf Technologies, Inc." \
+		--copyright-holder "The Connect Authors" \
 		--year-range "$(COPYRIGHT_YEARS)" $(LICENSE_IGNORE)
 
 .PHONY: upgrade
