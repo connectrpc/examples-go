@@ -4,9 +4,12 @@ on:
   issues:
     types:
       - opened
+      - reopened
+      - transferred
   pull_request:
     types:
       - opened
+      - reopened
 
 jobs:
   add-to-project:
