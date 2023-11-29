@@ -10,6 +10,9 @@ on:
     types:
       - opened
       - reopened
+  issue_comment:
+    types:
+      - created
 
 jobs:
   add-to-project:
