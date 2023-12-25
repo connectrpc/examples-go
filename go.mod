@@ -5,14 +5,14 @@ module connect-examples-go
 go 1.18
 
 require (
-	connectrpc.com/connect v1.11.1
+	connectrpc.com/connect v1.14.0
 	connectrpc.com/grpchealth v1.2.0
 	connectrpc.com/grpcreflect v1.2.0
 	github.com/rs/cors v1.10.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.15.0
-	google.golang.org/protobuf v1.31.0
+	golang.org/x/net v0.17.0
+	google.golang.org/protobuf v1.32.0
 )
 
 require (
