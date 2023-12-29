@@ -32,7 +32,7 @@ import (
 // generated with a version of connect newer than the one compiled into your binary. You can fix the
 // problem by either regenerating this code with an older version of connect or updating the connect
 // version compiled into your binary.
-const _ = connect.IsAtLeastVersion1_7_0
+const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// ElizaServiceName is the fully-qualified name of the ElizaService service.
@@ -53,6 +53,14 @@ const (
 	ElizaServiceConverseProcedure = "/connectrpc.eliza.v1.ElizaService/Converse"
 	// ElizaServiceIntroduceProcedure is the fully-qualified name of the ElizaService's Introduce RPC.
 	ElizaServiceIntroduceProcedure = "/connectrpc.eliza.v1.ElizaService/Introduce"
+)
+
+// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
+var (
+	elizaServiceServiceDescriptor         = v1.File_connectrpc_eliza_v1_eliza_proto.Services().ByName("ElizaService")
+	elizaServiceSayMethodDescriptor       = elizaServiceServiceDescriptor.Methods().ByName("Say")
+	elizaServiceConverseMethodDescriptor  = elizaServiceServiceDescriptor.Methods().ByName("Converse")
+	elizaServiceIntroduceMethodDescriptor = elizaServiceServiceDescriptor.Methods().ByName("Introduce")
 )
 
 // ElizaServiceClient is a client for the connectrpc.eliza.v1.ElizaService service.
@@ -81,18 +89,21 @@ func NewElizaServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 		say: connect.NewClient[v1.SayRequest, v1.SayResponse](
 			httpClient,
 			baseURL+ElizaServiceSayProcedure,
+			connect.WithSchema(elizaServiceSayMethodDescriptor),
 			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 			connect.WithClientOptions(opts...),
 		),
 		converse: connect.NewClient[v1.ConverseRequest, v1.ConverseResponse](
 			httpClient,
 			baseURL+ElizaServiceConverseProcedure,
-			opts...,
+			connect.WithSchema(elizaServiceConverseMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
 		introduce: connect.NewClient[v1.IntroduceRequest, v1.IntroduceResponse](
 			httpClient,
 			baseURL+ElizaServiceIntroduceProcedure,
-			opts...,
+			connect.WithSchema(elizaServiceIntroduceMethodDescriptor),
+			connect.WithClientOptions(opts...),
 		),
 	}
 }
@@ -141,18 +152,21 @@ func NewElizaServiceHandler(svc ElizaServiceHandler, opts ...connect.HandlerOpti
 	elizaServiceSayHandler := connect.NewUnaryHandler(
 		ElizaServiceSayProcedure,
 		svc.Say,
+		connect.WithSchema(elizaServiceSayMethodDescriptor),
 		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
 		connect.WithHandlerOptions(opts...),
 	)
 	elizaServiceConverseHandler := connect.NewBidiStreamHandler(
 		ElizaServiceConverseProcedure,
 		svc.Converse,
-		opts...,
+		connect.WithSchema(elizaServiceConverseMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
 	elizaServiceIntroduceHandler := connect.NewServerStreamHandler(
 		ElizaServiceIntroduceProcedure,
 		svc.Introduce,
-		opts...,
+		connect.WithSchema(elizaServiceIntroduceMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
 	)
 	return "/connectrpc.eliza.v1.ElizaService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
