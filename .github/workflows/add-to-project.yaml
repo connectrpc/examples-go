@@ -29,3 +29,46 @@ jobs:
         with:
           project-url: https://github.com/orgs/connectrpc/projects/1
           github-token: ${{ steps.app_token.outputs.token }}
+      - name: Get project id if status is done
+        if: ${{ github.event_name == 'issue_comment' }}
+        id: get_project_item_id
+        run: |
+          echo "item_id=$(gh api graphql -f query='query ($name: String!, $owner: String!, $number: Int!) {
+            repository(name: $name, owner: $owner) {
+              name
+              issue(number: $number) {
+                projectItems(first: 100) {
+                  nodes {
+                    id
+                    fieldValueByName(name: "Status") {
+                      ... on ProjectV2ItemFieldSingleSelectValue {
+                        optionId
+                      }
+                    }
+                    project {
+                      number
+                    }
+                  }
+                }
+              }
+            }
+          }' -f name=$REPO_NAME -f owner=$REPO_OWNER -f number=$ISSUE_NUMBER | jq -r '.data.repository.issue.projectItems.nodes | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id)" >> $GITHUB_OUTPUT
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+          REPO_OWNER: ${{ github.event.repository.owner }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+      - name: "Update status"
+        if: ${{ steps.get_project_item_id.outputs.item_id != '' }}
+        run: |
+          gh api -f query='mutation ($itemId: String!) {
+            updateProjectV2ItemFieldValue(
+              input: {
+                fieldId: "PVTSSF_lADOBcwMos4AX_p_zgPVtzo"
+                itemId: $itemId
+                projectId: "PVT_kwDOBcwMos4AX_p_"
+                value: { singleSelectOptionId: "80a785d9" }
+              }
+            ) {
+              clientMutationId
+            }
+          }' -f itemId=${{ steps.get_project_item_id.outputs.item_id }}
