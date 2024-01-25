@@ -38,7 +38,22 @@ jobs:
           echo item_id=$(gh api graphql -f query='query {
             repository(name: "${{ github.event.repository.name }}", owner: "${{ github.event.repository.owner.login }}") {
               name
-              issue(number: ${{ github.event.issue.number }}) {
+              issue(number: ${{ github.event.issue.number }}) @include(if: ${{ github.event.issue.pull_request == null }}) {
+                projectItems(first: 100) {
+                  nodes {
+                    id
+                    fieldValueByName(name: "Status") {
+                      ... on ProjectV2ItemFieldSingleSelectValue {
+                        optionId
+                      }
+                    }
+                    project {
+                      number
+                    }
+                  }
+                }
+              }
+              pullRequest(number: ${{ github.event.issue.number }}) @include(if: ${{ github.event.issue.pull_request != null }}) {
                 projectItems(first: 100) {
                   nodes {
                     id
@@ -54,7 +69,7 @@ jobs:
                 }
               }
             }
-          }' | jq -r '.data.repository.issue.projectItems.nodes | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id') >> $GITHUB_OUTPUT
+          }' | jq -r 'if .data.repository.issue != null then .data.repository.issue else .data.repository.pullRequest end | .projectItems.nodes  | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id') >> $GITHUB_OUTPUT
       - name: "Update status"
         if: ${{ steps.get_project_item_id.outputs.item_id != '' }}
         env:
