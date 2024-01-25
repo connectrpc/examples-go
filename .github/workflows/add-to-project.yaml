@@ -54,7 +54,7 @@ jobs:
                 }
               }
             }
-          }' -f name='${{ github.event.repository.name }}' -f owner='${{ github.event.repository.owner }}' -f number='${{ github.event.issue.number }}' | jq -r '.data.repository.issue.projectItems.nodes | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id') >> $GITHUB_OUTPUT
+          }' -f name='${{ github.event.repository.name }}' -f owner='${{ github.event.repository.owner }}' -f number=${{ github.event.issue.number }} | jq -r '.data.repository.issue.projectItems.nodes | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id') >> $GITHUB_OUTPUT
       - name: "Update status"
         if: ${{ steps.get_project_item_id.outputs.item_id != '' }}
         env:
