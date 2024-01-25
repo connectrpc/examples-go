@@ -36,7 +36,7 @@ jobs:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           echo item_id=$(gh api graphql -f query='query {
-            repository(name: "${{ github.event.repository.name }}", owner: "${{ github.event.repository.owner.name }}") {
+            repository(name: "${{ github.event.repository.name }}", owner: "${{ github.event.repository.owner.login }}") {
               name
               issue(number: ${{ github.event.issue.number }}) {
                 projectItems(first: 100) {
