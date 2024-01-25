@@ -60,7 +60,7 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
-          gh api -f query='mutation {
+          gh api grahql -f query='mutation {
             updateProjectV2ItemFieldValue(
               input: {
                 fieldId: "PVTSSF_lADOBcwMos4AX_p_zgPVtzo"
