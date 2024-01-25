@@ -60,15 +60,15 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
-          gh api -f query='mutation ($itemId: String!) {
+          gh api -f query='mutation {
             updateProjectV2ItemFieldValue(
               input: {
                 fieldId: "PVTSSF_lADOBcwMos4AX_p_zgPVtzo"
-                itemId: $itemId
+                itemId: "${{ steps.get_project_item_id.outputs.item_id }}"
                 projectId: "PVT_kwDOBcwMos4AX_p_"
                 value: { singleSelectOptionId: "80a785d9" }
               }
             ) {
               clientMutationId
             }
-          }' -f itemId='${{ steps.get_project_item_id.outputs.item_id }}'
+          }'
