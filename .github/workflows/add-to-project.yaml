@@ -32,6 +32,8 @@ jobs:
       - name: Get project id if status is done
         if: ${{ github.event_name == 'issue_comment' }}
         id: get_project_item_id
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           echo item_id=$(gh api graphql -f query='query ($name: String!, $owner: String!, $number: Int!) {
             repository(name: $name, owner: $owner) {
@@ -55,6 +57,8 @@ jobs:
           }' -f name='${{ github.event.repository.name }}' -f owner='${{ github.event.repository.owner }}' -f number='${{ github.event.issue.number }}' | jq -r '.data.repository.issue.projectItems.nodes | .[] | select(.project.number==1 and .fieldValueByName.optionId == "dea0b2c9") | .id') >> $GITHUB_OUTPUT
       - name: "Update status"
         if: ${{ steps.get_project_item_id.outputs.item_id != '' }}
+        env:
+          GH_TOKEN: ${{ steps.app_token.outputs.token }}
         run: |
           gh api -f query='mutation ($itemId: String!) {
             updateProjectV2ItemFieldValue(
