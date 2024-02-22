@@ -1,4 +1,4 @@
-// Copyright 2022-2023 The Connect Authors
+// Copyright 2022-2024 The Connect Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -59,8 +58,8 @@ func TestElizaServer(t *testing.T) {
 			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
 				Sentence: "Hello",
 			}))
-			require.Nil(t, err)
-			assert.True(t, len(result.Msg.Sentence) > 0)
+			require.NoError(t, err)
+			assert.NotEmpty(t, result.Msg.GetSentence())
 		}
 	})
 	t.Run("converse", func(t *testing.T) {
@@ -74,9 +73,11 @@ func TestElizaServer(t *testing.T) {
 				defer wg.Done()
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					require.Nil(t, err, fmt.Sprintf(`failed for string sentence: "%s"`, sentence))
+					if !assert.NoError(t, err, `failed for string sentence: "%s"`, sentence) {
+						break
+					}
 				}
-				require.Nil(t, stream.CloseRequest())
+				assert.NoError(t, stream.CloseRequest())
 			}()
 			go func() {
 				defer wg.Done()
@@ -85,11 +86,13 @@ func TestElizaServer(t *testing.T) {
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					require.Nil(t, err)
-					assert.True(t, len(msg.Sentence) > 0)
-					receivedValues = append(receivedValues, msg.Sentence)
+					if !assert.NoError(t, err) {
+						break
+					}
+					assert.NotEmpty(t, msg.GetSentence())
+					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				require.Nil(t, stream.CloseResponse())
+				assert.NoError(t, stream.CloseResponse())
 			}()
 			wg.Wait()
 			assert.Equal(t, len(receivedValues), len(sendValues))
@@ -102,13 +105,13 @@ func TestElizaServer(t *testing.T) {
 				Name: "Ringo",
 			})
 			stream, err := client.Introduce(context.Background(), request)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			for stream.Receive() {
 				total++
 			}
-			assert.Nil(t, stream.Err())
-			assert.Nil(t, stream.Close())
-			assert.True(t, total > 0)
+			require.NoError(t, stream.Err())
+			require.NoError(t, stream.Close())
+			assert.Greater(t, total, 0)
 		}
 	})
 }

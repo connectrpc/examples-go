@@ -9,7 +9,7 @@ MAKEFLAGS += --no-print-directory
 BIN=$(abspath .tmp/bin)
 export PATH := $(BIN):$(PATH)
 export GOBIN := $(abspath $(BIN))
-COPYRIGHT_YEARS := 2022-2023
+COPYRIGHT_YEARS := 2022-2024
 LICENSE_IGNORE := --ignore /testdata/
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
@@ -68,15 +68,15 @@ checkgenerate:
 
 $(BIN)/buf: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
+	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.29.0
 
 $(BIN)/license-header: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.26.1
+	$(GO) install github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.29.0
 
 $(BIN)/golangci-lint: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.54.1
+	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
 
 $(BIN)/protoc-gen-go: Makefile
 	@mkdir -p $(@D)
