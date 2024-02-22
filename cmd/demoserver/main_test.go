@@ -73,11 +73,11 @@ func TestElizaServer(t *testing.T) {
 				defer wg.Done()
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					if assert.ErrorContainsf(t, err, `failed for string sentence: "%s"`, sentence) { 
+					if !assert.NoError(t, err, `failed for string sentence: "%s"`, sentence) {
 						break
 					}
 				}
-				assert.NoError(t, stream.CloseRequest()) 
+				assert.NoError(t, stream.CloseRequest())
 			}()
 			go func() {
 				defer wg.Done()
@@ -92,7 +92,7 @@ func TestElizaServer(t *testing.T) {
 					assert.NotEmpty(t, msg.GetSentence())
 					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				assert.NoError(t, stream.CloseResponse()) 
+				assert.NoError(t, stream.CloseResponse())
 			}()
 			wg.Wait()
 			assert.Equal(t, len(receivedValues), len(sendValues))
