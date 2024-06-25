@@ -2,6 +2,7 @@ examples-go
 ===========
 
 [![Build](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml/badge.svg?branch=main)](https://github.com/connectrpc/examples-go/actions/workflows/ci.yaml)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fconnectrpc%2Fexamples-go.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fconnectrpc%2Fexamples-go?ref=badge_shield)
 
 `examples-go` contains an example RPC service built with [Connect][connect].
 Its API is defined by a [Protocol Buffer schema][schema], and the service
@@ -51,3 +52,7 @@ Offered under the [Apache 2 license][license].
 [grpcweb-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
 [license]: https://github.com/connectrpc/examples-go/blob/main/LICENSE.txt
 [schema]: https://github.com/connectrpc/examples-go/blob/main/proto/connectrpc/eliza/v1/eliza.proto
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fconnectrpc%2Fexamples-go.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fconnectrpc%2Fexamples-go?ref=badge_large)
