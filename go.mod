@@ -2,7 +2,7 @@
 // Users should clone the repo to explore the examples.
 module connect-examples-go
 
-go 1.18
+go 1.21
 
 require (
 	connectrpc.com/connect v1.14.0

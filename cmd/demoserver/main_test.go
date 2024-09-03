@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -59,8 +58,8 @@ func TestElizaServer(t *testing.T) {
 			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
 				Sentence: "Hello",
 			}))
-			require.Nil(t, err)
-			assert.True(t, len(result.Msg.Sentence) > 0)
+			require.NoError(t, err)
+			assert.NotEmpty(t, result.Msg.GetSentence())
 		}
 	})
 	t.Run("converse", func(t *testing.T) {
@@ -70,13 +69,15 @@ func TestElizaServer(t *testing.T) {
 			stream := client.Converse(context.Background())
 			var wg sync.WaitGroup
 			wg.Add(2)
+			errs := make(chan error, 4)
 			go func() {
 				defer wg.Done()
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					require.Nil(t, err, fmt.Sprintf(`failed for string sentence: "%s"`, sentence))
+					errs <- err
 				}
-				require.Nil(t, stream.CloseRequest())
+				err := stream.CloseRequest()
+				errs <- err
 			}()
 			go func() {
 				defer wg.Done()
@@ -85,13 +86,23 @@ func TestElizaServer(t *testing.T) {
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					require.Nil(t, err)
-					assert.True(t, len(msg.Sentence) > 0)
-					receivedValues = append(receivedValues, msg.Sentence)
+					errs <- err
+					assert.NotEmpty(t, msg.GetSentence())
+					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				require.Nil(t, stream.CloseResponse())
+				err := stream.CloseResponse()
+				errs <- err
 			}()
-			wg.Wait()
+			// close errs once all children finish.
+			go func() {
+				wg.Wait()
+				close(errs)
+			}()
+			for err := range errs {
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
 			assert.Equal(t, len(receivedValues), len(sendValues))
 		}
 	})
@@ -102,13 +113,13 @@ func TestElizaServer(t *testing.T) {
 				Name: "Ringo",
 			})
 			stream, err := client.Introduce(context.Background(), request)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			for stream.Receive() {
 				total++
 			}
-			assert.Nil(t, stream.Err())
-			assert.Nil(t, stream.Close())
-			assert.True(t, total > 0)
+			assert.NoError(t, stream.Err())
+			assert.NoError(t, stream.Close())
+			assert.Positive(t, total)
 		}
 	})
 }

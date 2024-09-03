@@ -53,7 +53,7 @@ func (e *elizaServer) Say(
 	_ context.Context,
 	req *connect.Request[elizav1.SayRequest],
 ) (*connect.Response[elizav1.SayResponse], error) {
-	reply, _ := eliza.Reply(req.Msg.Sentence) // ignore end-of-conversation detection
+	reply, _ := eliza.Reply(req.Msg.GetSentence()) // ignore end-of-conversation detection
 	return connect.NewResponse(&elizav1.SayResponse{
 		Sentence: reply,
 	}), nil
@@ -73,7 +73,7 @@ func (e *elizaServer) Converse(
 		} else if err != nil {
 			return fmt.Errorf("receive request: %w", err)
 		}
-		reply, endSession := eliza.Reply(request.Sentence)
+		reply, endSession := eliza.Reply(request.GetSentence())
 		if err := stream.Send(&elizav1.ConverseResponse{Sentence: reply}); err != nil {
 			return fmt.Errorf("send response: %w", err)
 		}
@@ -88,7 +88,7 @@ func (e *elizaServer) Introduce(
 	req *connect.Request[elizav1.IntroduceRequest],
 	stream *connect.ServerStream[elizav1.IntroduceResponse],
 ) error {
-	name := req.Msg.Name
+	name := req.Msg.GetName()
 	if name == "" {
 		name = "Anonymous User"
 	}
@@ -125,7 +125,7 @@ func newCORS() *cors.Cors {
 			http.MethodPatch,
 			http.MethodDelete,
 		},
-		AllowOriginFunc: func(origin string) bool {
+		AllowOriginFunc: func(_ /* origin */ string) bool {
 			// Allow all origins, which effectively disables CORS.
 			return true
 		},
