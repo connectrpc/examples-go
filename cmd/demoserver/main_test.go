@@ -17,16 +17,15 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"sync"
 	"testing"
 
 	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/sync/errgroup"
 
 	elizav1 "connect-examples-go/internal/gen/connectrpc/eliza/v1"
 	"connect-examples-go/internal/gen/connectrpc/eliza/v1/elizav1connect"
@@ -59,39 +58,37 @@ func TestElizaServer(t *testing.T) {
 			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
 				Sentence: "Hello",
 			}))
-			require.Nil(t, err)
-			assert.True(t, len(result.Msg.Sentence) > 0)
+			require.NoError(t, err)
+			assert.NotEmpty(t, result.Msg.GetSentence())
 		}
 	})
 	t.Run("converse", func(t *testing.T) {
 		for _, client := range clients {
 			sendValues := []string{"Hello!", "How are you doing?", "I have an issue with my bike", "bye"}
 			var receivedValues []string
-			stream := client.Converse(context.Background())
-			var wg sync.WaitGroup
-			wg.Add(2)
-			go func() {
-				defer wg.Done()
+			grp, ctx := errgroup.WithContext(context.Background())
+			stream := client.Converse(ctx)
+			grp.Go(func() error {
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					require.Nil(t, err, fmt.Sprintf(`failed for string sentence: "%s"`, sentence))
+					if err != nil {
+						return err
+					}
 				}
-				require.Nil(t, stream.CloseRequest())
-			}()
-			go func() {
-				defer wg.Done()
+				return stream.CloseRequest()
+			})
+			grp.Go(func() error {
 				for {
 					msg, err := stream.Receive()
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					require.Nil(t, err)
-					assert.True(t, len(msg.Sentence) > 0)
-					receivedValues = append(receivedValues, msg.Sentence)
+					assert.NotEmpty(t, msg.GetSentence())
+					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				require.Nil(t, stream.CloseResponse())
-			}()
-			wg.Wait()
+				return stream.CloseResponse()
+			})
+			require.NoError(t, grp.Wait())
 			assert.Equal(t, len(receivedValues), len(sendValues))
 		}
 	})
@@ -102,13 +99,13 @@ func TestElizaServer(t *testing.T) {
 				Name: "Ringo",
 			})
 			stream, err := client.Introduce(context.Background(), request)
-			assert.Nil(t, err)
+			require.NoError(t, err)
 			for stream.Receive() {
 				total++
 			}
-			assert.Nil(t, stream.Err())
-			assert.Nil(t, stream.Close())
-			assert.True(t, total > 0)
+			assert.NoError(t, stream.Err())
+			assert.NoError(t, stream.Close())
+			assert.Positive(t, total)
 		}
 	})
 }
