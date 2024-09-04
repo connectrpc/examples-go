@@ -75,11 +75,7 @@ func TestElizaServer(t *testing.T) {
 						return err
 					}
 				}
-				err := stream.CloseRequest()
-				if err != nil {
-					return err
-				}
-				return nil
+				return stream.CloseRequest()
 			})
 			grp.Go(func() error {
 				for {
@@ -90,11 +86,7 @@ func TestElizaServer(t *testing.T) {
 					assert.NotEmpty(t, msg.GetSentence())
 					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				err := stream.CloseResponse()
-				if err != nil {
-					return err
-				}
-				return nil
+				return stream.CloseResponse()
 			})
 			require.NoError(t, grp.Wait())
 			assert.Equal(t, len(receivedValues), len(sendValues))
