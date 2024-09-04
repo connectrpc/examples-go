@@ -20,12 +20,12 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"sync"
 	"testing"
 
 	"connectrpc.com/connect"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/sync/errgroup"
 
 	elizav1 "connect-examples-go/internal/gen/connectrpc/eliza/v1"
 	"connect-examples-go/internal/gen/connectrpc/eliza/v1/elizav1connect"
@@ -66,43 +66,37 @@ func TestElizaServer(t *testing.T) {
 		for _, client := range clients {
 			sendValues := []string{"Hello!", "How are you doing?", "I have an issue with my bike", "bye"}
 			var receivedValues []string
-			stream := client.Converse(context.Background())
-			var wg sync.WaitGroup
-			wg.Add(2)
-			errs := make(chan error, 4)
-			go func() {
-				defer wg.Done()
+			grp, ctx := errgroup.WithContext(context.Background())
+			stream := client.Converse(ctx)
+			grp.Go(func() error {
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
-					errs <- err
+					if err != nil {
+						return err
+					}
 				}
 				err := stream.CloseRequest()
-				errs <- err
-			}()
-			go func() {
-				defer wg.Done()
+				if err != nil {
+					return err
+				}
+				return nil
+			})
+			grp.Go(func() error {
 				for {
 					msg, err := stream.Receive()
 					if errors.Is(err, io.EOF) {
 						break
 					}
-					errs <- err
 					assert.NotEmpty(t, msg.GetSentence())
 					receivedValues = append(receivedValues, msg.GetSentence())
 				}
 				err := stream.CloseResponse()
-				errs <- err
-			}()
-			// close errs once all children finish.
-			go func() {
-				wg.Wait()
-				close(errs)
-			}()
-			for err := range errs {
 				if err != nil {
-					t.Fatal(err)
+					return err
 				}
-			}
+				return nil
+			})
+			require.NoError(t, grp.Wait())
 			assert.Equal(t, len(receivedValues), len(sendValues))
 		}
 	})
