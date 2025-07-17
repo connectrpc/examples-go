@@ -1,0 +1,10 @@
+version: v2
+modules:
+  - path: proto
+    name: buf.build/connectrpc/eliza
+lint:
+  use:
+    - DEFAULT
+breaking:
+  use:
+    - FILE
