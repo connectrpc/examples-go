@@ -26,9 +26,10 @@ import (
 	"syscall"
 	"time"
 
-	"connectrpc.com/connect"
-	"connectrpc.com/grpchealth"
-	"connectrpc.com/grpcreflect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
+	"connectrpc.com/grpchealth/v2"
+	"connectrpc.com/grpcreflect/v2"
 	"github.com/rs/cors"
 	"github.com/spf13/pflag"
 	"golang.org/x/net/http2"
@@ -51,17 +52,17 @@ func NewElizaServer(streamDelay time.Duration) elizav1connect.ElizaServiceHandle
 
 func (e *elizaServer) Say(
 	_ context.Context,
-	req *connect.Request[elizav1.SayRequest],
-) (*connect.Response[elizav1.SayResponse], error) {
-	reply, _ := eliza.Reply(req.Msg.GetSentence()) // ignore end-of-conversation detection
-	return connect.NewResponse(&elizav1.SayResponse{
+	req *elizav1.SayRequest,
+) (*elizav1.SayResponse, error) {
+	reply, _ := eliza.Reply(req.GetSentence()) // ignore end-of-conversation detection
+	return &elizav1.SayResponse{
 		Sentence: reply,
-	}), nil
+	}, nil
 }
 
 func (e *elizaServer) Converse(
 	ctx context.Context,
-	stream *connect.BidiStream[elizav1.ConverseRequest, elizav1.ConverseResponse],
+	stream elizav1connect.ElizaServiceConverseServerStream,
 ) error {
 	for {
 		if err := ctx.Err(); err != nil {
@@ -85,10 +86,10 @@ func (e *elizaServer) Converse(
 
 func (e *elizaServer) Introduce(
 	ctx context.Context,
-	req *connect.Request[elizav1.IntroduceRequest],
-	stream *connect.ServerStream[elizav1.IntroduceResponse],
+	req *elizav1.IntroduceRequest,
+	stream elizav1connect.ElizaServiceIntroduceServerStream,
 ) error {
-	name := req.Msg.GetName()
+	name := req.GetName()
 	if name == "" {
 		name = "Anonymous User"
 	}
@@ -177,27 +178,19 @@ func main() {
 		"/",
 		http.RedirectHandler("https://connectrpc.com/demo", http.StatusFound),
 	)
-	compress1KB := connect.WithCompressMinBytes(1024)
-	mux.Handle(elizav1connect.NewElizaServiceHandler(
-		NewElizaServer(*streamDelayArg),
-		compress1KB,
-	))
-	mux.Handle(grpchealth.NewHandler(
-		grpchealth.NewStaticChecker(elizav1connect.ElizaServiceName),
-		compress1KB,
-	))
-	mux.Handle(grpcreflect.NewHandlerV1(
-		grpcreflect.NewStaticReflector(elizav1connect.ElizaServiceName),
-		compress1KB,
-	))
-	mux.Handle(grpcreflect.NewHandlerV1Alpha(
-		grpcreflect.NewStaticReflector(elizav1connect.ElizaServiceName),
-		compress1KB,
-	))
+	compress1KB := connecthttp.WithCompressMinBytes(1024)
+	server := connect.NewServer()
+	elizav1connect.RegisterElizaServiceHandler(server, NewElizaServer(*streamDelayArg))
+
+	grpchealth.Register(server, grpchealth.NewStaticChecker(elizav1connect.ElizaServiceName))
+	grpcreflect.Register(server)
+	connecthttp.Mount(mux, server, compress1KB)
+
 	addr := "localhost:8080"
 	if port := os.Getenv("PORT"); port != "" {
 		addr = ":" + port
 	}
+
 	srv := &http.Server{
 		Addr: addr,
 		Handler: h2c.NewHandler(

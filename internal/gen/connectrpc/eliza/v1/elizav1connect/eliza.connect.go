@@ -20,179 +20,260 @@ package elizav1connect
 
 import (
 	v1 "connect-examples-go/internal/gen/connectrpc/eliza/v1"
-	connect "connectrpc.com/connect"
+	connect "connectrpc.com/connect/v2"
 	context "context"
-	errors "errors"
-	http "net/http"
-	strings "strings"
+	sync "sync"
 )
-
-// This is a compile-time assertion to ensure that this generated file and the connect package are
-// compatible. If you get a compiler error that this constant is not defined, this code was
-// generated with a version of connect newer than the one compiled into your binary. You can fix the
-// problem by either regenerating this code with an older version of connect or updating the connect
-// version compiled into your binary.
-const _ = connect.IsAtLeastVersion1_13_0
 
 const (
 	// ElizaServiceName is the fully-qualified name of the ElizaService service.
 	ElizaServiceName = "connectrpc.eliza.v1.ElizaService"
 )
 
-// These constants are the fully-qualified names of the RPCs defined in this package. They're
-// exposed at runtime as Spec.Procedure and as the final two segments of the HTTP route.
+// These constants are the procedure names of the RPCs defined in this package. They're exposed at
+// runtime as Spec.Procedure and as the final two segments of the HTTP route.
 //
 // Note that these are different from the fully-qualified method names used by
 // google.golang.org/protobuf/reflect/protoreflect. To convert from these constants to
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
-	// ElizaServiceSayProcedure is the fully-qualified name of the ElizaService's Say RPC.
+	// ElizaServiceSayProcedure is the procedure name of the ElizaService's Say RPC.
 	ElizaServiceSayProcedure = "/connectrpc.eliza.v1.ElizaService/Say"
-	// ElizaServiceConverseProcedure is the fully-qualified name of the ElizaService's Converse RPC.
+	// ElizaServiceConverseProcedure is the procedure name of the ElizaService's Converse RPC.
 	ElizaServiceConverseProcedure = "/connectrpc.eliza.v1.ElizaService/Converse"
-	// ElizaServiceIntroduceProcedure is the fully-qualified name of the ElizaService's Introduce RPC.
+	// ElizaServiceIntroduceProcedure is the procedure name of the ElizaService's Introduce RPC.
 	ElizaServiceIntroduceProcedure = "/connectrpc.eliza.v1.ElizaService/Introduce"
 )
 
-// These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
 var (
-	elizaServiceServiceDescriptor         = v1.File_connectrpc_eliza_v1_eliza_proto.Services().ByName("ElizaService")
-	elizaServiceSayMethodDescriptor       = elizaServiceServiceDescriptor.Methods().ByName("Say")
-	elizaServiceConverseMethodDescriptor  = elizaServiceServiceDescriptor.Methods().ByName("Converse")
-	elizaServiceIntroduceMethodDescriptor = elizaServiceServiceDescriptor.Methods().ByName("Introduce")
+	elizaServiceSaySpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType:       connect.StreamTypeUnary,
+			Schema:           v1.File_connectrpc_eliza_v1_eliza_proto.Services().ByName("ElizaService").Methods().ByName("Say"),
+			Procedure:        ElizaServiceSayProcedure,
+			IdempotencyLevel: connect.IdempotencyNoSideEffects,
+		}
+	})
+	elizaServiceConverseSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeBidi,
+			Schema:     v1.File_connectrpc_eliza_v1_eliza_proto.Services().ByName("ElizaService").Methods().ByName("Converse"),
+			Procedure:  ElizaServiceConverseProcedure,
+		}
+	})
+	elizaServiceIntroduceSpec = sync.OnceValue(func() connect.Spec {
+		return connect.Spec{
+			StreamType: connect.StreamTypeServer,
+			Schema:     v1.File_connectrpc_eliza_v1_eliza_proto.Services().ByName("ElizaService").Methods().ByName("Introduce"),
+			Procedure:  ElizaServiceIntroduceProcedure,
+		}
+	})
 )
 
 // ElizaServiceClient is a client for the connectrpc.eliza.v1.ElizaService service.
 type ElizaServiceClient interface {
 	// Say is a unary RPC. Eliza responds to the prompt with a single sentence.
-	Say(context.Context, *connect.Request[v1.SayRequest]) (*connect.Response[v1.SayResponse], error)
+	Say(context.Context, *v1.SayRequest) (*v1.SayResponse, error)
 	// Converse is a bidirectional RPC. The caller may exchange multiple
 	// back-and-forth messages with Eliza over a long-lived connection. Eliza
 	// responds to each ConverseRequest with a ConverseResponse.
-	Converse(context.Context) *connect.BidiStreamForClient[v1.ConverseRequest, v1.ConverseResponse]
+	Converse(context.Context) (ElizaServiceConverseClientStream, error)
 	// Introduce is a server streaming RPC. Given the caller's name, Eliza
 	// returns a stream of sentences to introduce itself.
-	Introduce(context.Context, *connect.Request[v1.IntroduceRequest]) (*connect.ServerStreamForClient[v1.IntroduceResponse], error)
+	Introduce(context.Context, *v1.IntroduceRequest) (ElizaServiceIntroduceClientStream, error)
 }
 
-// NewElizaServiceClient constructs a client for the connectrpc.eliza.v1.ElizaService service. By
-// default, it uses the Connect protocol with the binary Protobuf Codec, asks for gzipped responses,
-// and sends uncompressed requests. To use the gRPC or gRPC-Web protocols, supply the
-// connect.WithGRPC() or connect.WithGRPCWeb() options.
-//
-// The URL supplied here should be the base URL for the Connect or gRPC server (for example,
-// http://api.acme.com or https://acme.com/grpc).
-func NewElizaServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...connect.ClientOption) ElizaServiceClient {
-	baseURL = strings.TrimRight(baseURL, "/")
-	return &elizaServiceClient{
-		say: connect.NewClient[v1.SayRequest, v1.SayResponse](
-			httpClient,
-			baseURL+ElizaServiceSayProcedure,
-			connect.WithSchema(elizaServiceSayMethodDescriptor),
-			connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-			connect.WithClientOptions(opts...),
-		),
-		converse: connect.NewClient[v1.ConverseRequest, v1.ConverseResponse](
-			httpClient,
-			baseURL+ElizaServiceConverseProcedure,
-			connect.WithSchema(elizaServiceConverseMethodDescriptor),
-			connect.WithClientOptions(opts...),
-		),
-		introduce: connect.NewClient[v1.IntroduceRequest, v1.IntroduceResponse](
-			httpClient,
-			baseURL+ElizaServiceIntroduceProcedure,
-			connect.WithSchema(elizaServiceIntroduceMethodDescriptor),
-			connect.WithClientOptions(opts...),
-		),
+// NewElizaServiceClient constructs a client for the connectrpc.eliza.v1.ElizaService service.
+// Multiple service clients may share a single connect.Client.
+func NewElizaServiceClient(client *connect.Client) ElizaServiceClient {
+	return &elizaServiceClient{client: client}
+}
+
+// ElizaServiceConverseClientStream is the client stream for the ElizaService's Converse RPC.
+type ElizaServiceConverseClientStream struct {
+	stream connect.ClientStream
+}
+
+// SendHeaders opens the stream and flushes the request headers without a message. The first Send or
+// Receive does this implicitly.
+func (s ElizaServiceConverseClientStream) SendHeaders() error {
+	return s.stream.SendHeaders()
+}
+
+// Send sends a request message to the server.
+func (s ElizaServiceConverseClientStream) Send(req *v1.ConverseRequest) error {
+	return s.stream.Send(req)
+}
+
+// CloseSend closes the request side of the stream.
+func (s ElizaServiceConverseClientStream) CloseSend() error {
+	return s.stream.CloseSend()
+}
+
+// Receive returns the next response message from the server.
+func (s ElizaServiceConverseClientStream) Receive() (*v1.ConverseResponse, error) {
+	var res v1.ConverseResponse
+	if err := s.stream.Receive(&res); err != nil {
+		return nil, err
 	}
+	return &res, nil
 }
 
-// elizaServiceClient implements ElizaServiceClient.
-type elizaServiceClient struct {
-	say       *connect.Client[v1.SayRequest, v1.SayResponse]
-	converse  *connect.Client[v1.ConverseRequest, v1.ConverseResponse]
-	introduce *connect.Client[v1.IntroduceRequest, v1.IntroduceResponse]
+// Close releases the stream's resources. It is idempotent and is typically deferred to clean up a
+// stream abandoned before io.EOF.
+func (s ElizaServiceConverseClientStream) Close() error {
+	return s.stream.Close()
 }
 
-// Say calls connectrpc.eliza.v1.ElizaService.Say.
-func (c *elizaServiceClient) Say(ctx context.Context, req *connect.Request[v1.SayRequest]) (*connect.Response[v1.SayResponse], error) {
-	return c.say.CallUnary(ctx, req)
+// ElizaServiceIntroduceClientStream is the client stream for the ElizaService's Introduce RPC.
+type ElizaServiceIntroduceClientStream struct {
+	stream connect.ClientStream
 }
 
-// Converse calls connectrpc.eliza.v1.ElizaService.Converse.
-func (c *elizaServiceClient) Converse(ctx context.Context) *connect.BidiStreamForClient[v1.ConverseRequest, v1.ConverseResponse] {
-	return c.converse.CallBidiStream(ctx)
+// Receive returns the next response message from the server.
+func (s ElizaServiceIntroduceClientStream) Receive() (*v1.IntroduceResponse, error) {
+	var res v1.IntroduceResponse
+	if err := s.stream.Receive(&res); err != nil {
+		return nil, err
+	}
+	return &res, nil
 }
 
-// Introduce calls connectrpc.eliza.v1.ElizaService.Introduce.
-func (c *elizaServiceClient) Introduce(ctx context.Context, req *connect.Request[v1.IntroduceRequest]) (*connect.ServerStreamForClient[v1.IntroduceResponse], error) {
-	return c.introduce.CallServerStream(ctx, req)
+// Close releases the stream's resources. It is idempotent and is typically deferred to clean up a
+// stream abandoned before io.EOF.
+func (s ElizaServiceIntroduceClientStream) Close() error {
+	return s.stream.Close()
 }
 
 // ElizaServiceHandler is an implementation of the connectrpc.eliza.v1.ElizaService service.
 type ElizaServiceHandler interface {
 	// Say is a unary RPC. Eliza responds to the prompt with a single sentence.
-	Say(context.Context, *connect.Request[v1.SayRequest]) (*connect.Response[v1.SayResponse], error)
+	Say(context.Context, *v1.SayRequest) (*v1.SayResponse, error)
 	// Converse is a bidirectional RPC. The caller may exchange multiple
 	// back-and-forth messages with Eliza over a long-lived connection. Eliza
 	// responds to each ConverseRequest with a ConverseResponse.
-	Converse(context.Context, *connect.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error
+	Converse(context.Context, ElizaServiceConverseServerStream) error
 	// Introduce is a server streaming RPC. Given the caller's name, Eliza
 	// returns a stream of sentences to introduce itself.
-	Introduce(context.Context, *connect.Request[v1.IntroduceRequest], *connect.ServerStream[v1.IntroduceResponse]) error
+	Introduce(context.Context, *v1.IntroduceRequest, ElizaServiceIntroduceServerStream) error
 }
 
-// NewElizaServiceHandler builds an HTTP handler from the service implementation. It returns the
-// path on which to mount the handler and the handler itself.
-//
-// By default, handlers support the Connect, gRPC, and gRPC-Web protocols with the binary Protobuf
-// and JSON codecs. They also support gzip compression.
-func NewElizaServiceHandler(svc ElizaServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
-	elizaServiceSayHandler := connect.NewUnaryHandler(
-		ElizaServiceSayProcedure,
-		svc.Say,
-		connect.WithSchema(elizaServiceSayMethodDescriptor),
-		connect.WithIdempotency(connect.IdempotencyNoSideEffects),
-		connect.WithHandlerOptions(opts...),
+// RegisterElizaServiceHandler registers svc as the connectrpc.eliza.v1.ElizaService implementation
+// on server.
+func RegisterElizaServiceHandler(server *connect.Server, svc ElizaServiceHandler) {
+	adapter := elizaServiceHandler{svc: svc}
+	server.Register(
+		connect.Method{Spec: elizaServiceSaySpec(), Handler: adapter.say},
+		connect.Method{Spec: elizaServiceConverseSpec(), Handler: adapter.converse},
+		connect.Method{Spec: elizaServiceIntroduceSpec(), Handler: adapter.introduce},
 	)
-	elizaServiceConverseHandler := connect.NewBidiStreamHandler(
-		ElizaServiceConverseProcedure,
-		svc.Converse,
-		connect.WithSchema(elizaServiceConverseMethodDescriptor),
-		connect.WithHandlerOptions(opts...),
-	)
-	elizaServiceIntroduceHandler := connect.NewServerStreamHandler(
-		ElizaServiceIntroduceProcedure,
-		svc.Introduce,
-		connect.WithSchema(elizaServiceIntroduceMethodDescriptor),
-		connect.WithHandlerOptions(opts...),
-	)
-	return "/connectrpc.eliza.v1.ElizaService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		switch r.URL.Path {
-		case ElizaServiceSayProcedure:
-			elizaServiceSayHandler.ServeHTTP(w, r)
-		case ElizaServiceConverseProcedure:
-			elizaServiceConverseHandler.ServeHTTP(w, r)
-		case ElizaServiceIntroduceProcedure:
-			elizaServiceIntroduceHandler.ServeHTTP(w, r)
-		default:
-			http.NotFound(w, r)
-		}
-	})
+}
+
+// ElizaServiceConverseServerStream is the server stream for the ElizaService's Converse RPC.
+type ElizaServiceConverseServerStream struct {
+	stream connect.ServerStream
+}
+
+// Receive returns the next request message from the client.
+func (s ElizaServiceConverseServerStream) Receive() (*v1.ConverseRequest, error) {
+	var req v1.ConverseRequest
+	if err := s.stream.Receive(&req); err != nil {
+		return nil, err
+	}
+	return &req, nil
+}
+
+// SendHeaders flushes the response headers without a message. The first Send does this implicitly.
+func (s ElizaServiceConverseServerStream) SendHeaders() error {
+	return s.stream.SendHeaders()
+}
+
+// Send sends a response message to the client.
+func (s ElizaServiceConverseServerStream) Send(res *v1.ConverseResponse) error {
+	return s.stream.Send(res)
+}
+
+// ElizaServiceIntroduceServerStream is the server stream for the ElizaService's Introduce RPC.
+type ElizaServiceIntroduceServerStream struct {
+	stream connect.ServerStream
+}
+
+// SendHeaders flushes the response headers without a message. The first Send does this implicitly.
+func (s ElizaServiceIntroduceServerStream) SendHeaders() error {
+	return s.stream.SendHeaders()
+}
+
+// Send sends a response message to the client.
+func (s ElizaServiceIntroduceServerStream) Send(res *v1.IntroduceResponse) error {
+	return s.stream.Send(res)
 }
 
 // UnimplementedElizaServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedElizaServiceHandler struct{}
 
-func (UnimplementedElizaServiceHandler) Say(context.Context, *connect.Request[v1.SayRequest]) (*connect.Response[v1.SayResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("connectrpc.eliza.v1.ElizaService.Say is not implemented"))
+func (UnimplementedElizaServiceHandler) Say(context.Context, *v1.SayRequest) (*v1.SayResponse, error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, "connectrpc.eliza.v1.ElizaService.Say is not implemented")
 }
 
-func (UnimplementedElizaServiceHandler) Converse(context.Context, *connect.BidiStream[v1.ConverseRequest, v1.ConverseResponse]) error {
-	return connect.NewError(connect.CodeUnimplemented, errors.New("connectrpc.eliza.v1.ElizaService.Converse is not implemented"))
+func (UnimplementedElizaServiceHandler) Converse(context.Context, ElizaServiceConverseServerStream) error {
+	return connect.NewError(connect.CodeUnimplemented, "connectrpc.eliza.v1.ElizaService.Converse is not implemented")
 }
 
-func (UnimplementedElizaServiceHandler) Introduce(context.Context, *connect.Request[v1.IntroduceRequest], *connect.ServerStream[v1.IntroduceResponse]) error {
-	return connect.NewError(connect.CodeUnimplemented, errors.New("connectrpc.eliza.v1.ElizaService.Introduce is not implemented"))
+func (UnimplementedElizaServiceHandler) Introduce(context.Context, *v1.IntroduceRequest, ElizaServiceIntroduceServerStream) error {
+	return connect.NewError(connect.CodeUnimplemented, "connectrpc.eliza.v1.ElizaService.Introduce is not implemented")
+}
+
+type elizaServiceClient struct {
+	client *connect.Client
+}
+
+func (c *elizaServiceClient) Say(ctx context.Context, req *v1.SayRequest) (*v1.SayResponse, error) {
+	var res v1.SayResponse
+	if err := c.client.CallUnary(ctx, elizaServiceSaySpec(), req, &res); err != nil {
+		return nil, err
+	}
+	return &res, nil
+}
+
+func (c *elizaServiceClient) Converse(ctx context.Context) (ElizaServiceConverseClientStream, error) {
+	stream, err := c.client.CallClientStream(ctx, elizaServiceConverseSpec())
+	if err != nil {
+		return ElizaServiceConverseClientStream{}, err
+	}
+	return ElizaServiceConverseClientStream{stream: stream}, nil
+}
+
+func (c *elizaServiceClient) Introduce(ctx context.Context, req *v1.IntroduceRequest) (ElizaServiceIntroduceClientStream, error) {
+	stream, err := c.client.CallServerStream(ctx, elizaServiceIntroduceSpec(), req)
+	if err != nil {
+		return ElizaServiceIntroduceClientStream{}, err
+	}
+	return ElizaServiceIntroduceClientStream{stream: stream}, nil
+}
+
+type elizaServiceHandler struct{ svc ElizaServiceHandler }
+
+func (h elizaServiceHandler) say(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.SayRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	res, err := h.svc.Say(ctx, &req)
+	if err != nil {
+		return err
+	}
+	return stream.Send(res)
+}
+
+func (h elizaServiceHandler) converse(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	return h.svc.Converse(ctx, ElizaServiceConverseServerStream{stream: stream})
+}
+
+func (h elizaServiceHandler) introduce(ctx context.Context, _ connect.Spec, stream connect.ServerStream) error {
+	var req v1.IntroduceRequest
+	if err := stream.Receive(&req); err != nil {
+		return err
+	}
+	return h.svc.Introduce(ctx, &req, ElizaServiceIntroduceServerStream{stream: stream})
 }
