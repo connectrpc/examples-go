@@ -66,7 +66,8 @@ func TestElizaServer(t *testing.T) {
 			sendValues := []string{"Hello!", "How are you doing?", "I have an issue with my bike", "bye"}
 			var receivedValues []string
 			grp, ctx := errgroup.WithContext(context.Background())
-			stream := client.Converse(ctx)
+			stream, err := client.Converse(ctx)
+			require.NoError(t, err)
 			grp.Go(func() error {
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
@@ -74,7 +75,7 @@ func TestElizaServer(t *testing.T) {
 						return err
 					}
 				}
-				return stream.CloseRequest()
+				return stream.CloseSend()
 			})
 			grp.Go(func() error {
 				for {
@@ -85,7 +86,7 @@ func TestElizaServer(t *testing.T) {
 					assert.NotEmpty(t, msg.GetSentence())
 					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				return stream.CloseResponse()
+				return stream.Close()
 			})
 			require.NoError(t, grp.Wait())
 			assert.Equal(t, len(receivedValues), len(sendValues))
