@@ -12,7 +12,7 @@ export GOBIN := $(abspath $(BIN))
 COPYRIGHT_YEARS := 2022-2023
 LICENSE_IGNORE := --ignore /testdata/ --ignore .github/ --ignore ".*\.ya?ml"
 BUF_VERSION := v1.73.0
-GOLANGCI_LINT_VERSION ?= v2.13.1
+GOLANGCI_LINT_VERSION ?= v2.14.0
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
 
@@ -47,6 +47,7 @@ lint: $(BIN)/golangci-lint $(BIN)/buf ## Lint Go and protobuf
 
 .PHONY: lintfix
 lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
+	golangci-lint fmt
 	golangci-lint run --fix
 	buf format -w .
 
