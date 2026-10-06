@@ -89,7 +89,7 @@ func TestElizaServer(t *testing.T) {
 				return stream.Close()
 			})
 			require.NoError(t, grp.Wait())
-			assert.Equal(t, len(receivedValues), len(sendValues))
+			assert.Len(t, receivedValues, len(sendValues))
 		}
 	})
 	t.Run("introduce", func(t *testing.T) {
