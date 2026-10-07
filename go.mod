@@ -11,14 +11,14 @@ require (
 	github.com/rs/cors v1.10.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
-	golang.org/x/net v0.17.0
-	golang.org/x/sync v0.8.0
+	golang.org/x/net v0.55.0
+	golang.org/x/sync v0.20.0
 	google.golang.org/protobuf v1.36.12
 )
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	golang.org/x/text v0.13.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
