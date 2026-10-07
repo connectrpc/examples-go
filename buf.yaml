@@ -4,7 +4,7 @@ modules:
     name: buf.build/connectrpc/eliza
 lint:
   use:
-    - DEFAULT
+    - STANDARD
 breaking:
   use:
     - FILE

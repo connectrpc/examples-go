@@ -23,7 +23,7 @@ package eliza
 
 import (
 	"fmt"
-	"math/rand"
+	"math/rand/v2"
 	"strings"
 )
 
@@ -85,5 +85,5 @@ func reflect(fragment string) string {
 }
 
 func randomElementFrom(list []string) string {
-	return list[rand.Intn(len(list))] //nolint:gosec
+	return list[rand.IntN(len(list))] //nolint:gosec
 }

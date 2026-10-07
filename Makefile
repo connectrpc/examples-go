@@ -10,7 +10,9 @@ BIN=$(abspath .tmp/bin)
 export PATH := $(BIN):$(PATH)
 export GOBIN := $(abspath $(BIN))
 COPYRIGHT_YEARS := 2022-2023
-LICENSE_IGNORE := --ignore /testdata/
+LICENSE_IGNORE := --ignore /testdata/ --ignore .github/ --ignore ".*\.ya?ml"
+BUF_VERSION := v1.73.0
+GOLANGCI_LINT_VERSION ?= v2.14.0
 # Set to use a different compiler. For example, `GO=go1.18rc1 make test`.
 GO ?= go
 
@@ -45,6 +47,7 @@ lint: $(BIN)/golangci-lint $(BIN)/buf ## Lint Go and protobuf
 
 .PHONY: lintfix
 lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
+	golangci-lint fmt
 	golangci-lint run --fix
 	buf format -w .
 
@@ -68,15 +71,15 @@ checkgenerate:
 
 $(BIN)/buf: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
+	$(GO) install github.com/bufbuild/buf/cmd/buf@$(BUF_VERSION)
 
 $(BIN)/license-header: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.26.1
+	$(GO) install github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@$(BUF_VERSION)
 
 $(BIN)/golangci-lint: Makefile
 	@mkdir -p $(@D)
-	$(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.60.3
+	$(GO) install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
 
 $(BIN)/protoc-gen-go: Makefile
 	@mkdir -p $(@D)
@@ -84,4 +87,4 @@ $(BIN)/protoc-gen-go: Makefile
 
 $(BIN)/protoc-gen-connect-go: Makefile go.mod
 	@mkdir -p $(@D)
-	$(GO) install connectrpc.com/connect/cmd/protoc-gen-connect-go
+	$(GO) install connectrpc.com/connect/v2/cmd/protoc-gen-connect-go

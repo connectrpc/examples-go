@@ -14,6 +14,11 @@ statements as a stereotypical psychotherapist might; since the original program
 was a demonstration of the superficiality of human-computer communication, the
 therapy is not very convincing.
 
+The service uses [connect-go v2][connect-v2] (`connectrpc.com/connect/v2`),
+along with the v2 [gRPC health][grpchealth] and [server reflection][grpcreflect]
+packages. If you're upgrading your own service from v1, see the [v2 migration
+guide][migration].
+
 For more on Connect, see the [announcement blog post][blog], the documentation
 on [connectrpc.com][docs], or the [Connect][connect] repo.
 
@@ -44,10 +49,14 @@ Offered under the [Apache 2 license][license].
 [blog]: https://buf.build/blog/connect-a-better-grpc
 [connect]: https://github.com/connectrpc/connect-go
 [connect-protocol]: https://connectrpc.com/docs/protocol
+[connect-v2]: https://pkg.go.dev/connectrpc.com/connect/v2
 [docs]: https://connectrpc.com
 [eliza]: https://en.wikipedia.org/wiki/ELIZA
 [grpc-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md
+[grpchealth]: https://github.com/connectrpc/grpchealth-go
+[grpcreflect]: https://github.com/connectrpc/grpcreflect-go
 [grpcurl]: https://github.com/fullstorydev/grpcurl
 [grpcweb-protocol]: https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md
-[license]: https://github.com/connectrpc/examples-go/blob/main/LICENSE.txt
+[license]: https://github.com/connectrpc/examples-go/blob/main/LICENSE
+[migration]: https://github.com/connectrpc/connect-go/blob/main/docs/v2-migration.md
 [schema]: https://github.com/connectrpc/examples-go/blob/main/proto/connectrpc/eliza/v1/eliza.proto

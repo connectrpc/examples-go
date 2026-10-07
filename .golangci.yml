@@ -1,64 +1,78 @@
-linters-settings:
-  errcheck:
-    check-type-assertions: true
-  exhaustruct:
-    include:
-      # No zero values for param structs.
-      - 'connect-examples-go\..*[pP]arams'
-  forbidigo:
-    forbid:
-      # Unlike most Buf projects, we're allowing the standard library's log
-      # package: this is a demo service, so let's keep it simple.
-      - '^fmt\.Print'
-      - '^print$'
-      - '^println$'
-      - '^panic$'
-  gci:
-    sections:
-      - standard # Standard section: captures all standard packages.
-      - default # Default section: contains all imports that could not be matched to another section type.
-      - prefix(connect-examples-go) # Custom section: groups all imports with the specified Prefix.
-  godox:
-    # TODO, OPT, etc. comments are fine to commit. Use FIXME comments for
-    # temporary hacks, and use godox to prevent committing them.
-    keywords: [FIXME]
-  varnamelen:
-    ignore-decls:
-      - T any
-      - i int
-      - wg sync.WaitGroup
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
-    - copyloopvar       # only valid for go v1.22 and above
     - cyclop            # covered by gocyclo
-    - depguard          # in golangci-lint v1.53.0+ default requires only stdlib deps
-    - exportloopref     # deprecated in golangci v1.60.2
-    - execinquery       # deprecated in golangci v1.58 
+    - depguard          # unnecessary for small projects
+    - exhaustruct       # deprecated, replaced by exhaustruct_v5
     - funlen            # rely on code review to limit function length
     - gocognit          # dubious "cognitive overhead" quantification
-    - gofumpt           # prefer standard gofmt
-    - goimports         # rely on gci instead
-    - gomnd             # deprecated in golangci v1.58 in favor of mnd
-    - mnd               # some unnamed constants are okay
-    - intrange          # only valid for go v1.22 and above
+    - gomodguard        # deprecated, replaced by gomodguard_v2
     - ireturn           # "accept interfaces, return structs" isn't ironclad
     - lll               # don't want hard limits for line length
     - maintidx          # covered by gocyclo
+    - mnd               # some unnamed constants are okay
     - nlreturn          # generous whitespace violates house style
+    - noinlineerr       # inline is fine
     - paralleltest      # in this project, it's not worth making all tests parallel
     - testpackage       # internal tests are fine
     - tparallel         # in this project, it's not worth making all tests parallel
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
-issues:
-  exclude-dirs-use-default: false
-  exclude:
-    # Don't ban use of fmt.Errorf to create new errors, but the remaining
-    # checks from err113 are useful.
-    - "do not define dynamic errors.*"
-  exclude-rules:
-    # It's much more convenient to keep eliza's matching and response data as
-    # globals rather than config.
-    - linters: [gochecknoglobals]
-      path: internal/eliza/globals.go
+    - wsl_v5            # generous whitespace violates house style
+  settings:
+    errcheck:
+      check-type-assertions: true
+    exhaustruct_v5:
+      enforce-patterns:
+        # No zero values for param structs.
+        - connect-examples-go\..*[pP]arams
+      explicit-mode: true
+    forbidigo:
+      forbid:
+        # Unlike most Buf projects, we're allowing the standard library's log
+        # package: this is a demo service, so let's keep it simple.
+        - pattern: ^fmt\.Print
+        - pattern: ^print$
+        - pattern: ^println$
+        - pattern: ^panic$
+    godox:
+      # TODO, OPT, etc. comments are fine to commit. Use FIXME comments for
+      # temporary hacks, and use godox to prevent committing them.
+      keywords:
+        - FIXME
+    varnamelen:
+      ignore-decls:
+        - T any
+        - i int
+        - wg sync.WaitGroup
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      # It's much more convenient to keep eliza's matching and response data as
+      # globals rather than config.
+      - linters:
+          - gochecknoglobals
+          - goconst
+        path: internal/eliza/globals.go
+      # Don't ban use of fmt.Errorf to create new errors, but the remaining
+      # checks from err113 are useful.
+      - path: (.+)\.go$
+        text: 'do not define dynamic errors, use wrapped static errors instead: .*'
+formatters:
+  enable:
+    - gci
+    - gofmt
+  settings:
+    gci:
+      sections:
+        - standard # Standard section: captures all standard packages.
+        - default # Default section: contains all imports that could not be matched to another section type.
+        - prefix(connect-examples-go) # Custom section: groups all imports with the specified Prefix.
+  exclusions:
+    generated: lax

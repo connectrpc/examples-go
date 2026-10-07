@@ -22,7 +22,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/sync/errgroup"
@@ -34,32 +35,30 @@ import (
 func TestElizaServer(t *testing.T) {
 	t.Parallel()
 	mux := http.NewServeMux()
-	mux.Handle(elizav1connect.NewElizaServiceHandler(
-		NewElizaServer(0),
-	))
+	srv := connect.NewServer()
+	elizav1connect.RegisterElizaServiceHandler(srv, NewElizaServer(0))
+	connecthttp.Mount(mux, srv)
+
 	server := httptest.NewUnstartedServer(mux)
 	server.EnableHTTP2 = true
 	server.StartTLS()
 	defer server.Close()
 
-	connectClient := elizav1connect.NewElizaServiceClient(
-		server.Client(),
-		server.URL,
-	)
-	grpcClient := elizav1connect.NewElizaServiceClient(
-		server.Client(),
-		server.URL,
-		connect.WithGRPC(),
-	)
+	connectClient := elizav1connect.NewElizaServiceClient(connect.NewClient(
+		connecthttp.NewTransport(server.Client(), server.URL),
+	))
+	grpcClient := elizav1connect.NewElizaServiceClient(connect.NewClient(
+		connecthttp.NewTransport(server.Client(), server.URL, connecthttp.WithGRPC()),
+	))
 	clients := []elizav1connect.ElizaServiceClient{connectClient, grpcClient}
 
 	t.Run("say", func(t *testing.T) {
 		for _, client := range clients {
-			result, err := client.Say(context.Background(), connect.NewRequest(&elizav1.SayRequest{
+			result, err := client.Say(context.Background(), &elizav1.SayRequest{
 				Sentence: "Hello",
-			}))
+			})
 			require.NoError(t, err)
-			assert.NotEmpty(t, result.Msg.GetSentence())
+			assert.NotEmpty(t, result.GetSentence())
 		}
 	})
 	t.Run("converse", func(t *testing.T) {
@@ -67,7 +66,8 @@ func TestElizaServer(t *testing.T) {
 			sendValues := []string{"Hello!", "How are you doing?", "I have an issue with my bike", "bye"}
 			var receivedValues []string
 			grp, ctx := errgroup.WithContext(context.Background())
-			stream := client.Converse(ctx)
+			stream, err := client.Converse(ctx)
+			require.NoError(t, err)
 			grp.Go(func() error {
 				for _, sentence := range sendValues {
 					err := stream.Send(&elizav1.ConverseRequest{Sentence: sentence})
@@ -75,7 +75,7 @@ func TestElizaServer(t *testing.T) {
 						return err
 					}
 				}
-				return stream.CloseRequest()
+				return stream.CloseSend()
 			})
 			grp.Go(func() error {
 				for {
@@ -86,24 +86,33 @@ func TestElizaServer(t *testing.T) {
 					assert.NotEmpty(t, msg.GetSentence())
 					receivedValues = append(receivedValues, msg.GetSentence())
 				}
-				return stream.CloseResponse()
+				return stream.Close()
 			})
 			require.NoError(t, grp.Wait())
-			assert.Equal(t, len(receivedValues), len(sendValues))
+			assert.Len(t, receivedValues, len(sendValues))
 		}
 	})
 	t.Run("introduce", func(t *testing.T) {
 		total := 0
 		for _, client := range clients {
-			request := connect.NewRequest(&elizav1.IntroduceRequest{
+			request := &elizav1.IntroduceRequest{
 				Name: "Ringo",
-			})
+			}
 			stream, err := client.Introduce(context.Background(), request)
 			require.NoError(t, err)
-			for stream.Receive() {
+			var streamErr error
+			for {
+				_, err := stream.Receive()
+				if err != nil {
+					streamErr = err
+					break
+				}
 				total++
 			}
-			assert.NoError(t, stream.Err())
+			if errors.Is(streamErr, io.EOF) {
+				streamErr = nil
+			}
+			assert.NoError(t, streamErr)
 			assert.NoError(t, stream.Close())
 			assert.Positive(t, total)
 		}

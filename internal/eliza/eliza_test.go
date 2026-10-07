@@ -32,7 +32,7 @@ func TestReplyToGoodbyes(t *testing.T) {
 
 func TestDefaultAnswers(t *testing.T) {
 	t.Parallel()
-	for i := 0; i < 3; i++ {
+	for i := range 3 {
 		response, _ := Reply("i have" + strings.Repeat(" ", i))
 		assert.Contains(t, defaultResponses, response)
 	}
