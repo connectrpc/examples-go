@@ -5,7 +5,7 @@ module connect-examples-go
 go 1.26.0
 
 require (
-	connectrpc.com/connect/v2 v2.0.0-alpha.1
+	connectrpc.com/connect/v2 v2.0.0
 	connectrpc.com/grpchealth/v2 v2.0.0-20260928173035-7caca4e16b22
 	connectrpc.com/grpcreflect/v2 v2.0.0-20260928194020-91069382f6ac
 	github.com/rs/cors v1.10.0
