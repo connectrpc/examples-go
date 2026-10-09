@@ -32,8 +32,6 @@ import (
 	"connectrpc.com/grpcreflect/v2"
 	"github.com/rs/cors"
 	"github.com/spf13/pflag"
-	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 
 	"connect-examples-go/internal/eliza"
 	elizav1 "connect-examples-go/internal/gen/connectrpc/eliza/v1"
@@ -191,12 +189,13 @@ func main() {
 		addr = ":" + port
 	}
 
+	protocols := new(http.Protocols)
+	protocols.SetHTTP1(true)
+	protocols.SetUnencryptedHTTP2(true)
 	srv := &http.Server{
-		Addr: addr,
-		Handler: h2c.NewHandler(
-			newCORS().Handler(mux),
-			&http2.Server{},
-		),
+		Addr:              addr,
+		Handler:           newCORS().Handler(mux),
+		Protocols:         protocols,
 		ReadHeaderTimeout: time.Second,
 		ReadTimeout:       5 * time.Minute,
 		WriteTimeout:      5 * time.Minute,
