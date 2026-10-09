@@ -8,7 +8,7 @@ require (
 	connectrpc.com/connect/v2 v2.0.0
 	connectrpc.com/grpchealth/v2 v2.0.0-20260928173035-7caca4e16b22
 	connectrpc.com/grpcreflect/v2 v2.0.0-20260928194020-91069382f6ac
-	github.com/rs/cors v1.10.0
+	github.com/rs/cors v1.11.0
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/net v0.55.0
