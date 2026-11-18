@@ -1,5 +1,5 @@
-connectrpc.com/connect/v2 v2.0.0 h1:PVVpWl2Xv9dIWN2gijs4HK40NSnPFzLqCEEmZ8fCUQ8=
-connectrpc.com/connect/v2 v2.0.0/go.mod h1:N32OLrstcPUzkykFynnefFro3+xzSdOrZlK2jHmS/xo=
+connectrpc.com/connect/v2 v2.0.2 h1:PoPDmOlhc46elsuCdKCKTxjNBb3HJlKF+s/sP2oucPw=
+connectrpc.com/connect/v2 v2.0.2/go.mod h1:N32OLrstcPUzkykFynnefFro3+xzSdOrZlK2jHmS/xo=
 connectrpc.com/grpchealth/v2 v2.0.0 h1:GOBfwE25Q70Kt0QhPawK9BKsh2tP8X0EUGeIk5Sz/ag=
 connectrpc.com/grpchealth/v2 v2.0.0/go.mod h1:85+eI11LlzfuyFXX/IuB/xzEfRVdJM3/RtoMgV9AEV4=
 connectrpc.com/grpcreflect/v2 v2.0.0 h1:Ah7U5kSd/kslH5KFNS8jh/e3u6UYVoX7lwkjcIfSq6A=
