@@ -118,3 +118,14 @@ func TestElizaServer(t *testing.T) {
 		}
 	})
 }
+
+func TestCORS(t *testing.T) {
+	t.Parallel()
+	handler := newCORS().Handler(http.NotFoundHandler())
+	req := httptest.NewRequestWithContext(t.Context(), http.MethodPost, "/", nil)
+	req.Header.Set("Origin", "https://buf.build")
+	rec := httptest.NewRecorder()
+	handler.ServeHTTP(rec, req)
+	assert.Equal(t, "https://buf.build", rec.Header().Get("Access-Control-Allow-Origin"))
+	assert.Contains(t, rec.Header().Get("Access-Control-Expose-Headers"), "Grpc-Status")
+}
