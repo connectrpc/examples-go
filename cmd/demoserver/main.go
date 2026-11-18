@@ -28,9 +28,10 @@ import (
 
 	"connectrpc.com/connect/v2"
 	"connectrpc.com/connect/v2/connecthttp"
+	"connectrpc.com/cors"
 	"connectrpc.com/grpchealth/v2"
 	"connectrpc.com/grpcreflect/v2"
-	"github.com/rs/cors"
+	rscors "github.com/rs/cors"
 	"github.com/spf13/pflag"
 
 	"connect-examples-go/internal/eliza"
@@ -112,37 +113,19 @@ func (e *elizaServer) Introduce(
 	return nil
 }
 
-func newCORS() *cors.Cors {
+func newCORS() *rscors.Cors {
 	// To let web developers play with the demo service from browsers, we need a
 	// very permissive CORS setup.
-	return cors.New(cors.Options{
-		AllowedMethods: []string{
-			http.MethodHead,
-			http.MethodGet,
-			http.MethodPost,
-			http.MethodPut,
-			http.MethodPatch,
-			http.MethodDelete,
-		},
+	return rscors.New(rscors.Options{
+		AllowedMethods: cors.AllowedMethods(),
 		AllowOriginFunc: func(_ /* origin */ string) bool {
 			// Allow all origins, which effectively disables CORS.
 			return true
 		},
+		// Allow any request header so tools like Buf Studio can send custom
+		// headers. Most servers should use cors.AllowedHeaders() instead.
 		AllowedHeaders: []string{"*"},
-		ExposedHeaders: []string{
-			// Content-Type is in the default safelist.
-			"Accept",
-			"Accept-Encoding",
-			"Accept-Post",
-			"Connect-Accept-Encoding",
-			"Connect-Content-Encoding",
-			"Content-Encoding",
-			"Grpc-Accept-Encoding",
-			"Grpc-Encoding",
-			"Grpc-Message",
-			"Grpc-Status",
-			"Grpc-Status-Details-Bin",
-		},
+		ExposedHeaders: cors.ExposedHeaders(),
 		// Let browsers cache CORS information for longer, which reduces the number
 		// of preflight requests. Any changes to ExposedHeaders won't take effect
 		// until the cached data expires. FF caps this value at 24h, and modern
@@ -172,8 +155,11 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+	// Only redirect browsers visiting the root. Requests for unknown procedures
+	// must get a 404 (with CORS headers) rather than a cross-origin redirect,
+	// which browsers report as an opaque CORS failure.
 	mux.Handle(
-		"/",
+		"GET /{$}",
 		http.RedirectHandler("https://connectrpc.com/demo", http.StatusFound),
 	)
 	compress1KB := connecthttp.WithCompressMinBytes(1024)
